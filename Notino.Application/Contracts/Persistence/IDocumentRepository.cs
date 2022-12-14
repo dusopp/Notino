@@ -9,6 +9,6 @@ namespace Notino.Application.Contracts.Persistence
         
         public Task<string> AddDocumentWithTagsAsync(Document document, IEnumerable<string> tagNames);
     
-        public Task DeleteDocumentAsync(string id);
+        public Task<string> DeleteDocumentWithTagsAsync(string id);
     }
 }

@@ -20,13 +20,14 @@ namespace Notino.Persistence.HDD.Repositories
         }
 
 
-        public async Task DeleteDocumentAsync(string id)
+        public async Task<string> DeleteDocumentWithTagsAsync(string id)
         {
             //toto should add try catch
             Task t = Task.Run(() => File.Delete(GetFileName(id)));
 
-            await t;           
-        }
-
+            await t; 
+            //toto dat prec
+            return id;
+        }  
     }
 }

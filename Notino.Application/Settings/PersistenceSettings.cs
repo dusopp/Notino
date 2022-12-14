@@ -6,7 +6,7 @@ namespace Notino.Application.Settings
 {
     public class PersistenceSettings
     {
-        public List<string> NonDbDocumentRepos { get; set; }
+        public List<string> NonPrimaryPersistenceRepos { get; set; }
 
         public List<string> RDBMSDocumentRepos { get; set; }
 

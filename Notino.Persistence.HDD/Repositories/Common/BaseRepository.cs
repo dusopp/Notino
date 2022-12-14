@@ -9,7 +9,7 @@ namespace Notino.Persistence.HDD.Repositories.Common
     {
         public IUnitOfWork UnitOfWork => throw new NotImplementedException();
 
-        public Task Add(T entity)
+        public async Task Add(T entity)
         {
             throw new NotImplementedException();
         }
@@ -19,12 +19,17 @@ namespace Notino.Persistence.HDD.Repositories.Common
             throw new NotImplementedException();
         }
 
-        public Task<bool> Exists(TKey id)
+        public async Task<TKey> DeleteById(TKey entity)
         {
             throw new NotImplementedException();
         }
 
-        public Task<T> GetById(TKey id)
+        public async Task<bool> Exists(TKey id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<T> GetById(TKey id)
         {
             throw new NotImplementedException();
         }

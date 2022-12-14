@@ -38,7 +38,7 @@ namespace Notino.API.Middleware
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, $"Something went wrong {httpContext.Request.Path}");
+                logger.LogError(ex, $"Error: {httpContext.Request.Path}");
 
                 await HandleExceptionAsync(httpContext, ex);
             }

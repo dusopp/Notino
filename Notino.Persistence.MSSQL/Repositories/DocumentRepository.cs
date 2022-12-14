@@ -21,8 +21,7 @@ namespace Notino.Persistence.MSSQL.Repositories
 
         public async Task<string> AddDocumentWithTagsAsync(Document document, IEnumerable<string> tagNames)
         {
-
-
+            
             var documentExists = await _dbContext
                 .Documents
                 .SingleOrDefaultAsync(x => x.Id == document.Id);
@@ -46,7 +45,7 @@ namespace Notino.Persistence.MSSQL.Repositories
                 await _dbContext
                     .Tags
                     .AddRangeAsync(
-                        notFoundTags.Select(tagName => new Tag { Name = tagName})
+                        notFoundTags.Select(tagName => new @string { Name = tagName})
                     );
             }
 
@@ -64,9 +63,11 @@ namespace Notino.Persistence.MSSQL.Repositories
             return document.Id;
         }
 
-        public Task DeleteDocumentAsync(string id)
+        public async Task<string> DeleteDocumentWithTagsAsync(string id)
         {
             throw new NotImplementedException();
+
+            //return id;
         }
 
         public async Task<Document> GetDocumentAsync(string documentId)

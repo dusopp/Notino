@@ -11,6 +11,8 @@ namespace Notino.Application.Contracts.Persistence
 
         Task Delete(TEntity entity);
 
+        Task<TKey> DeleteById(TKey id);
+
         Task<bool> Exists(TKey id);
         
     }

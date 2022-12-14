@@ -12,11 +12,12 @@ namespace Notino.Persistence.MSSQL.Repositories.Common
         private IDocumentRepository _documentRepo;
 
         public IDocumentRepository DocumentRepository => 
-            _documentRepo ??= new DocumentRepository(_context);
+            _documentRepo;
 
-        public UnitOfWork(DocumentDbContext dbContext)
+        public UnitOfWork(DocumentDbContext dbContext, IDocumentRepository documentRepository)
         {
             _context = dbContext;
+            _documentRepo = documentRepository;
         }
 
         public void Dispose()
