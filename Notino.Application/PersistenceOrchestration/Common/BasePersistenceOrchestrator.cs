@@ -15,14 +15,14 @@ namespace Notino.Application.PersistenceOrchestration.Common
         public abstract Task AddAsync(Domain.Document entity, IEnumerable<string> tagNames);
 
         public async Task RevertAsync(
-            List<Task<string>> failedTasks,
+            List<Task> failedTasks,
             string id,
-            Dictionary<int, Func<string, Task<string>>> revertFuncs,
+            Dictionary<int, Func<string, Task>> revertFuncs,
             int revertCnt = 0
             )
         {   
             var revertMethodsDict = new Dictionary<int, Func<string, Task>>();
-            var revertTasks = new List<Task<string>>();
+            var revertTasks = new List<Task>();
 
             for (int i = 0; i < failedTasks.Count; i++)
             {

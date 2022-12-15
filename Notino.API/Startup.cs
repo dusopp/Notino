@@ -37,18 +37,17 @@ namespace Notino.API
             services.Configure<PersistenceSettings>(Configuration.GetSection(nameof(PersistenceSettings)));
             services.AddOptions();
 
-            services.ConfigureApplicationServices();
-            services.ConfigurePersistenceServices(Configuration);
+            services.ConfigureApplicationServices();  
+            
+            //here order matters, register the primary storage as last one
             services.ConfigureFilePersistenceServices(Configuration);
+            services.ConfigureRBDMSPersistenceServices(Configuration);
 
-            //tototo konstanta
+        
             services.AddCors(o =>
                 o.AddPolicy(CorsPolicyName,
                 builder => builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod()));
 
-            //services.AddControllers()
-            //    .AddNewtonsoftJson()
-            //    .AddXmlSerializerFormatters();
 
             services.AddControllers(options => { 
                

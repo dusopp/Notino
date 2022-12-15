@@ -19,15 +19,11 @@ namespace Notino.Persistence.MSSQL.Repositories
             _dbContext = dbContext;
         }       
 
-        public async Task<string> AddDocumentWithTagsAsync(Document document, IEnumerable<string> tagNames)
-        {
-            
-            var documentExists = await _dbContext
-                .Documents
-                .SingleOrDefaultAsync(x => x.Id == document.Id);
-
-            if (documentExists != null)
-                throw new BadRequestException($"Document with Id: {document.Id} already exists");
+        public async Task AddDocumentWithTagsAsync(Document document, IEnumerable<string> tagNames)
+        {            
+            //tototo
+            if (await Exists(document.Id))
+                throw new AlreadyExistsException(nameof(Document), document.Id); 
 
             var foundTags = await _dbContext.Tags               
                 .Where(x => tagNames.Contains(x.Name))
@@ -58,23 +54,27 @@ namespace Notino.Persistence.MSSQL.Repositories
                 .Select(t => new DocumentTag { DocumentId = document.Id, TagId = t.Id})
                 .ToList();
 
-            await _dbContext.Documents.AddAsync(document);            
-
-            return document.Id;
+            await _dbContext.Documents.AddAsync(document);          
         }
 
-        public async Task<string> DeleteDocumentWithTagsAsync(string id)
+        public async Task DeleteDocumentWithTagsAsync(string documentId)
         {
-            throw new NotImplementedException();
-
-            //return id;
-        }
-
-        public async Task<Document> GetDocumentAsync(string documentId)
-        {
-            return await _dbContext
+            var document = await _dbContext
                 .Documents
-                .SingleOrDefaultAsync(x => x.Id == documentId);
+                .Include(x => x.DocumentTag)
+                .SingleOrDefaultAsync(d => d.Id == documentId);
+
+            if (document != null)
+            {
+                foreach (var documentTag in document.DocumentTag)
+                {
+                    _dbContext.DocumentTags.Remove(documentTag);
+                }
+
+                await Delete(document);
+            }
+            //remove
+            await _dbContext.SaveChangesAsync();
         }
     }
 }

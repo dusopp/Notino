@@ -33,8 +33,8 @@ namespace Notino.Application.PersistenceOrchestration.Document
 
         public override async Task AddAsync(Domain.Document document, IEnumerable<string> tagNames)
         {
-            var createTasks = new List<Task<string>>();
-            var revertFuncs = new Dictionary<int, Func<string, Task<string>>>();
+            var createTasks = new List<Task>();
+            var revertFuncs = new Dictionary<int, Func<string, Task>>();
 
             for (int i = 0; i < _documentRepositories.Count; i++)
             {

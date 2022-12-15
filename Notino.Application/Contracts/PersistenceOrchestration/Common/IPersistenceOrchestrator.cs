@@ -8,10 +8,10 @@ namespace Notino.Application.Contracts.PersistenceOrchestration
     public interface IPersistenceOrchestrator<TKey>
     {       
 
-        Task RevertAsync(List<Task<TKey>> failedTasks, 
+        Task RevertAsync(List<Task> failedTasks, 
             TKey id, 
             Dictionary<int, 
-            Func<TKey, Task<TKey>>> revertMethods,
+            Func<TKey, Task>> revertMethods,
             int revertsCnt = 0);
 
     }
