@@ -27,8 +27,7 @@ namespace Notino.Persistence.MSSQL.Repositories.Common
         }
 
         public async Task Save()
-        {          
-
+        {         
             await _context.SaveChangesAsync();
         }
     }

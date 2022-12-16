@@ -3,7 +3,7 @@
 namespace Notino.Application.Contracts.Persistence
 {
     public interface IRepository<TEntity, TKey> where TEntity : class
-    {      
+    {   
 
         Task<TEntity> GetById(TKey id);
 
@@ -13,7 +13,7 @@ namespace Notino.Application.Contracts.Persistence
 
         Task<TKey> DeleteById(TKey id);
 
-        Task<bool> Exists(TKey id);
+        Task<bool> Exists(TKey id);        
         
     }
 }

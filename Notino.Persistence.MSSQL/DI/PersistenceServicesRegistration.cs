@@ -10,7 +10,7 @@ namespace Notino.Persistence.MSSQL.DI
 {
     public static class PersistenceServicesRegistration
     {
-        public static IServiceCollection ConfigureRBDMSPersistenceServices(this IServiceCollection services, IConfiguration configuration)
+        public static IServiceCollection ConfigurePrimaryPersistenceServices(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddDbContext<DocumentDbContext>(
                 options => options.UseSqlServer(

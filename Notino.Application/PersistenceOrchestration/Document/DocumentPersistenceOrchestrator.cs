@@ -43,11 +43,7 @@ namespace Notino.Application.PersistenceOrchestration.Document
                 revertFuncs.Add(i, _documentRepositories[i].DeleteDocumentWithTagsAsync);
             }
 
-            //foreach (var repo in _documentRepositories)
-            //{
-                
-            //}
-
+          
             var result = Task.WhenAll(createTasks);
 
             try

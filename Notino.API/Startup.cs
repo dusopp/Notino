@@ -39,9 +39,10 @@ namespace Notino.API
 
             services.ConfigureApplicationServices();  
             
-            //here order matters, register the primary storage as last one
-            services.ConfigureFilePersistenceServices(Configuration);
-            services.ConfigureRBDMSPersistenceServices(Configuration);
+            //here order matters!
+            //primary storage has to be registered last
+            services.ConfigureSecondaryPersistenceServices(Configuration);
+            services.ConfigurePrimaryPersistenceServices(Configuration);
 
         
             services.AddCors(o =>
@@ -49,10 +50,12 @@ namespace Notino.API
                 builder => builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod()));
 
 
-            services.AddControllers(options => { 
-               
-            
-            });
+            services.AddControllers()
+                .AddNewtonsoftJson()
+                .AddJsonOptions(opts => 
+                     opts.JsonSerializerOptions
+                    .PropertyNamingPolicy = null
+                );
            
             services.AddMessagePack(options => { 
                 options.MediaTypes.Add("application/x-msgpack");

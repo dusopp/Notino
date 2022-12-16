@@ -10,7 +10,7 @@ namespace Notino.Persistence.HDD.DI
 {
     public static class FilePersistenceServicesRegistration
     {
-        public static IServiceCollection ConfigureFilePersistenceServices(this IServiceCollection services, IConfiguration configuration)
+        public static IServiceCollection ConfigureSecondaryPersistenceServices(this IServiceCollection services, IConfiguration configuration)
         {
        
             
