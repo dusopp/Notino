@@ -1,15 +1,21 @@
 ﻿using Notino.Application.Contracts.Persistence;
 using Notino.Persistence.HDD.Constants;
 using System;
+using System.IO;
 using System.Threading.Tasks;
 
 namespace Notino.Persistence.HDD.Repositories.Common
 {
     public class BaseRepository<T, TKey> : IRepository<T, TKey> where T : class
     {
-        public IUnitOfWork UnitOfWork => throw new NotImplementedException();
+        protected readonly string entityName;
 
-        public Task Add(T entity)
+        public BaseRepository(string entityName)
+        {
+            this.entityName = entityName;
+        }
+         
+        public async Task Add(T entity)
         {
             throw new NotImplementedException();
         }
@@ -19,20 +25,25 @@ namespace Notino.Persistence.HDD.Repositories.Common
             throw new NotImplementedException();
         }
 
+        public async Task<TKey> DeleteById(TKey entity)
+        {
+            throw new NotImplementedException();
+        }
+
         public Task<bool> Exists(TKey id)
         {
-            throw new NotImplementedException();
+            return Task.FromResult(File.Exists(GetFileName(id)));
         }
 
-        public Task<T> GetById(TKey id)
+        public async Task<T> GetById(TKey id)
         {
             throw new NotImplementedException();
         }
 
-        //toto prec
-        protected string GetFileName(TKey id)
-        {
-            return String.Format(FileNames.Document, id); 
+        protected virtual string GetFileName(TKey id)
+        {            
+            return $"{entityName}{id}.txt";
         }
+
     }
 }

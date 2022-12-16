@@ -20,7 +20,9 @@ namespace Notino.Persistence.MSSQL.Repositories.Common
 
         public async Task<TEntity> GetById(TKey id)
         {
-            return await _dbContext.Set<TEntity>().FindAsync(id);
+            return await _dbContext
+                .Set<TEntity>()
+                .FindAsync(id);
         }       
 
         public async Task Add(TEntity entity)
@@ -31,6 +33,11 @@ namespace Notino.Persistence.MSSQL.Repositories.Common
         public async Task Delete(TEntity entity)
         {
             _dbContext.Set<TEntity>().Remove(entity);
+        }
+
+        public async Task<TKey> DeleteById(TKey entity)
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

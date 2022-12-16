@@ -12,18 +12,19 @@ namespace Notino.Application.Features.Document.Handlers.Commands
     public class CreateDocumentHandler : ICommandHandler<CreateDocumentCommand, Response>
     {
         private readonly IDocumentPersistenceOrchestrator storageOrchestrator;
+        private readonly IUnitOfWork unitOfWork;
         private readonly IDocumentRepository _documentRepository;
 
-        public CreateDocumentHandler(IDocumentPersistenceOrchestrator storageOrchestrator, IDocumentRepository documentRepository)
+        public CreateDocumentHandler(IDocumentPersistenceOrchestrator storageOrchestrator, IUnitOfWork unitOfWork)
         {
             this.storageOrchestrator = storageOrchestrator;
-            _documentRepository = documentRepository;
+            this.unitOfWork = unitOfWork;
+            //_documentRepository = documentRepository;
         }
 
         //tototo return type skontrolovat
         public async Task<Response> Handle(CreateDocumentCommand request, CancellationToken cancellationToken)
-        {
-            
+        {           
 
             var response = new Response();
 
@@ -35,7 +36,7 @@ namespace Notino.Application.Features.Document.Handlers.Commands
 
             await storageOrchestrator.AddAsync(newDocument, request.DocumentDto.Tags);
 
-            //await _documentRepository.AddDocumentWithTagsAsync(newDocument, request.DocumentDto.Tags);
+            //await unitOfWork.DocumentRepository.DeleteDocumentWithTagsAsync(newDocument.Id);
  
             return response;
         }

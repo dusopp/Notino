@@ -1,32 +1,46 @@
-﻿using Notino.Application.Contracts.Persistence;
+﻿using Notino.Application.AsyncronousConstructs;
+using Notino.Application.Contracts.Persistence;
+using Notino.Application.Exceptions;
 using Notino.Domain;
+using Notino.Persistence.HDD.Constants;
 using Notino.Persistence.HDD.Repositories.Common;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Notino.Persistence.HDD.Repositories
 {
     public class DocumentRepository : BaseRepository<Document, string>, IDocumentRepository
     {
-        private const string FileNameFormat = "document{0}.txt";
+        private static readonly AsyncLock asyncLock = new AsyncLock();
 
-        public async Task<string> AddDocumentWithTagsAsync(Document document, IEnumerable<string> tagNames)
+        public DocumentRepository()
+        :base(nameof(Document))
         {
-            await File.AppendAllTextAsync(GetFileName(document.Id), document.Value);
-            return document.Id;
         }
 
 
-        public async Task DeleteDocumentAsync(string id)
-        {
-            //toto should add try catch
-            Task t = Task.Run(() => File.Delete(GetFileName(id)));
+        public async Task AddDocumentWithTagsAsync(Document document, IEnumerable<string> tagNames)
+        {          
+            
+            if(await Exists(document.Id))
+                throw new AlreadyExistsException(nameof(Document), document.Id);
 
-            await t;           
+            using (await asyncLock.LockAsync())
+            {
+                var exists = await Exists(document.Id);
+                if (!exists)
+                {
+                    await File.AppendAllTextAsync(GetFileName(document.Id), document.Value);
+                }
+            }          
         }
 
+
+        public async Task DeleteDocumentWithTagsAsync(string id)
+        {          
+            await Task.Run(() => File.Delete(GetFileName(id)));           
+        }
     }
 }

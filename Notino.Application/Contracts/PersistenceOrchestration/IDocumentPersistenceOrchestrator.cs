@@ -4,10 +4,8 @@ using System.Threading.Tasks;
 
 namespace Notino.Application.Contracts.PersistenceOrchestration
 {
-    public interface IDocumentPersistenceOrchestrator
+    public interface IDocumentPersistenceOrchestrator : IPersistenceOrchestrator<string>
     {
-        public Task AddAsync(Document document, IEnumerable<string> tagNames);
-
-
+        Task AddAsync(Document entity, IEnumerable<string> tagNames);
     }
 }

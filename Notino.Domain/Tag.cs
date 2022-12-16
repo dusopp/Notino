@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Notino.Domain
 {
-    public class Tag : BaseDomainEntity<int>
+    public class @string : BaseDomainEntity<int>
     {
         public ICollection<DocumentTag> DocumentTag { get; set; }
 

@@ -4,12 +4,13 @@ using Microsoft.Extensions.DependencyInjection;
 using Notino.Application.Contracts.Persistence;
 using Notino.Persistence.MSSQL.Repositories;
 using Notino.Persistence.MSSQL.Repositories.Common;
+using System.ComponentModel;
 
 namespace Notino.Persistence.MSSQL.DI
 {
     public static class PersistenceServicesRegistration
     {
-        public static IServiceCollection ConfigurePersistenceServices(this IServiceCollection services, IConfiguration configuration)
+        public static IServiceCollection ConfigurePrimaryPersistenceServices(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddDbContext<DocumentDbContext>(
                 options => options.UseSqlServer(
@@ -17,8 +18,10 @@ namespace Notino.Persistence.MSSQL.DI
 
 
             services.AddScoped(typeof(IRepository<,>), typeof(BaseRepository<,>));
-            services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IDocumentRepository, DocumentRepository>();
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
+            //services.AddScoped<DocumentRepository>();
+
 
             return services;
         }

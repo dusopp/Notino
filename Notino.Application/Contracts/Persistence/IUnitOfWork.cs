@@ -7,7 +7,7 @@ namespace Notino.Application.Contracts.Persistence
 {
     public interface IUnitOfWork : IDisposable
     {
-        IDocumentRepository DocumentRepository { get; }
+        IDocumentRepository DocumentRepository { get; }        
 
         Task Save();
     }

@@ -37,23 +37,25 @@ namespace Notino.API
             services.Configure<PersistenceSettings>(Configuration.GetSection(nameof(PersistenceSettings)));
             services.AddOptions();
 
-            services.ConfigureApplicationServices();
-            services.ConfigurePersistenceServices(Configuration);
-            services.ConfigureFilePersistenceServices(Configuration);
+            services.ConfigureApplicationServices();  
+            
+            //here order matters!
+            //primary storage has to be registered last
+            services.ConfigureSecondaryPersistenceServices(Configuration);
+            services.ConfigurePrimaryPersistenceServices(Configuration);
 
-            //tototo konstanta
+        
             services.AddCors(o =>
                 o.AddPolicy(CorsPolicyName,
                 builder => builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod()));
 
-            //services.AddControllers()
-            //    .AddNewtonsoftJson()
-            //    .AddXmlSerializerFormatters();
 
-            services.AddControllers(options => { 
-               
-            
-            });
+            services.AddControllers()
+                .AddNewtonsoftJson()
+                .AddJsonOptions(opts => 
+                     opts.JsonSerializerOptions
+                    .PropertyNamingPolicy = null
+                );
            
             services.AddMessagePack(options => { 
                 options.MediaTypes.Add("application/x-msgpack");

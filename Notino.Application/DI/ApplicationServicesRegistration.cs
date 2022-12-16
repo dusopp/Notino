@@ -4,8 +4,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Notino.Application.Behaviours;
 using Notino.Application.Caching;
 using Notino.Application.Contracts.Caching;
+using Notino.Application.Contracts.Persistence;
 using Notino.Application.Contracts.PersistenceOrchestration;
-using Notino.Application.PersistenceOrchestration;
+using Notino.Application.PersistenceOrchestration.Document;
 using System.Reflection;
 
 namespace Notino.Application.DI
