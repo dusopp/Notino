@@ -40,7 +40,14 @@ namespace Notino.API.Controllers
             Request.Headers.TryGetValue("Accept", out var acceptHeader);
 
             var document = await _mediator
-                .Send(new GetDocumentRequest { Id = documentId, AcceptHeader = acceptHeader });
+                .Send(
+                    new GetDocumentRequest
+                    {
+                        Id = documentId,
+                        AcceptHeader = acceptHeader,
+                        BypassCache = false
+                    }
+                ); 
 
             return Content(document.RawResponse, acceptHeader, Encoding.UTF8);            
         }

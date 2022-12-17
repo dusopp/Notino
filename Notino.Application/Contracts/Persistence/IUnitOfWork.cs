@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Notino.Application.Contracts.Persistence
 {
-    public interface IUnitOfWork : IDisposable
+    public interface IUnitOfWork
     {
         IDocumentRepository DocumentRepository { get; }        
 

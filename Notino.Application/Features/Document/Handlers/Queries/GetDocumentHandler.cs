@@ -1,9 +1,7 @@
 ﻿using MediatR;
-using Newtonsoft.Json;
 using Notino.Application.Constants.Validation;
-using Notino.Application.Contracts.Caching;
 using Notino.Application.Contracts.Persistence;
-using Notino.Application.DTOs.Document;
+using Notino.Application.DTOs.Common;
 using Notino.Application.Exceptions;
 using Notino.Application.Features.Document.Requests.Queries;
 using System.Threading;
@@ -11,21 +9,16 @@ using System.Threading.Tasks;
 
 namespace Notino.Application.Features.Document.Handlers.Queries
 {
-    public class GetDocumentHandler : IRequestHandler<GetDocumentRequest, DocumentDto>
+    public class GetDocumentHandler : IRequestHandler<GetDocumentRequest, RawResponseDto>
     {
-        private readonly IApplicationState _applicationState;
         private readonly IUnitOfWork _unitOfWork;        
 
-        public GetDocumentHandler(
-            IApplicationState applicationState,
-            IUnitOfWork unitOfWork
-            )
-        {
-            _applicationState = applicationState;
+        public GetDocumentHandler(IUnitOfWork unitOfWork)
+        {            
             _unitOfWork = unitOfWork;            
         }
 
-        public async Task<DocumentDto> Handle(GetDocumentRequest request, CancellationToken cancellationToken)
+        public async Task<RawResponseDto> Handle(GetDocumentRequest request, CancellationToken cancellationToken)
         {
           
             var document = await _unitOfWork
@@ -35,11 +28,12 @@ namespace Notino.Application.Features.Document.Handlers.Queries
             if (document == null)
                 throw new NotFoundException(ValidationMessages.Id, request.Id);
 
-            var documentDto = JsonConvert.DeserializeObject<DocumentDto>(document.Value);
+            var rawReposnseDto = new RawResponseDto()
+            { 
+                StoredValue = document.RawJson
+            };
 
-            documentDto.StoredValue = document.Value;
-
-            return documentDto;
+            return rawReposnseDto;
         }
     }
 }

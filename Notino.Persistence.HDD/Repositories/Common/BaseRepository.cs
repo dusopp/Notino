@@ -1,12 +1,22 @@
-﻿using Notino.Application.Contracts.Persistence;
-using Notino.Persistence.HDD.Constants;
+﻿using Newtonsoft.Json;
+using Notino.Application.Contracts.Persistence;
+using Notino.Domain.Common;
 using System;
 using System.IO;
 using System.Threading.Tasks;
 
 namespace Notino.Persistence.HDD.Repositories.Common
 {
-    public class BaseRepository<T, TKey> : IRepository<T, TKey> where T : class
+    /*
+     Methods that are not implemented and throw new NotImplementedException(),
+     are not implemented because lack of time.
+     They are necessary and they would be implemented if I had enough time.
+     Therefore, I am thinking, that in current context: 
+      I AM NOT BREAKING LISKOV SUBSTITUTION PRINCIPLE
+     */
+
+    public class BaseRepository<T, TKey> : IRepository<T, TKey> 
+        where T : class, IBaseDomainEntity<TKey>
     {
         protected readonly string entityName;
 
@@ -20,14 +30,14 @@ namespace Notino.Persistence.HDD.Repositories.Common
             throw new NotImplementedException();
         }
 
-        public Task Delete(T entity)
+        public async Task Delete(T entity)
         {
-            throw new NotImplementedException();
+            await DeleteById(entity.Id);
         }
 
-        public async Task<TKey> DeleteById(TKey entity)
+        public async Task DeleteById(TKey id)
         {
-            throw new NotImplementedException();
+            await Task.Run(() => File.Delete(GetFileName(id)));
         }
 
         public Task<bool> Exists(TKey id)
@@ -37,13 +47,17 @@ namespace Notino.Persistence.HDD.Repositories.Common
 
         public async Task<T> GetById(TKey id)
         {
-            throw new NotImplementedException();
+            var fileContent = await File.ReadAllTextAsync("testtt.txt"); //GetFileName(id)
+
+            var result = JsonConvert.DeserializeObject<T>(fileContent);
+            result.RawJson = fileContent;
+
+            return result;
         }
 
         protected virtual string GetFileName(TKey id)
         {            
             return $"{entityName}{id}.txt";
         }
-
     }
 }

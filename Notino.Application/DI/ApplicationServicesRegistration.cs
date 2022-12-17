@@ -2,9 +2,6 @@
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using Notino.Application.Behaviours;
-using Notino.Application.Caching;
-using Notino.Application.Contracts.Caching;
-using Notino.Application.Contracts.Persistence;
 using Notino.Application.Contracts.PersistenceOrchestration;
 using Notino.Application.PersistenceOrchestration.Document;
 using System.Reflection;
@@ -19,10 +16,12 @@ namespace Notino.Application.DI
 
             services.AddMediatR(applicationAssembly);
             
+            //for pipeline behaviour, ORDER MATTERS!!!
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ResponseAdaptationBehaviour<,>));
-            services.AddValidatorsFromAssembly(applicationAssembly);
-            services.AddSingleton<IApplicationState, ApplicationMemoryCache>();
+            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(CachingBehavior<,>));
+            
+            services.AddValidatorsFromAssembly(applicationAssembly);           
             services.AddScoped<IDocumentPersistenceOrchestrator, DocumentPersistenceOrchestrator>();
 
             return services;

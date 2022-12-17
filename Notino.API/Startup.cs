@@ -34,7 +34,13 @@ namespace Notino.API
         public void ConfigureServices(IServiceCollection services)
         {
             AddSwaggerDoc(services);
+
+            //for develompment purpose this type of cachce is good enough
+            //for production lets say, redis would be an option, NOT ENOUGH TIME
+            services.AddDistributedMemoryCache();            
+
             services.Configure<PersistenceSettings>(Configuration.GetSection(nameof(PersistenceSettings)));
+            services.Configure<CacheSettings>(Configuration.GetSection(nameof(CacheSettings)));
             services.AddOptions();
 
             services.ConfigureApplicationServices();  
@@ -57,12 +63,12 @@ namespace Notino.API
                     .PropertyNamingPolicy = null
                 );
            
-            services.AddMessagePack(options => { 
-                options.MediaTypes.Add("application/x-msgpack");
+            //services.AddMessagePack(options => { 
+            //    options.MediaTypes.Add("application/x-msgpack");
                
-            });
+            //});
 
-            services.AddMemoryCache();
+            
         }
 
         private void AddSwaggerDoc(IServiceCollection services)

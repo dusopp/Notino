@@ -1,17 +1,12 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
 
-
 namespace Notino.Application.DTOs.Common
 {
-    public interface IRawResponseDto
+    public class RawResponseDto : IRawResponseDto
     {
-       
         public string RawResponse { get; set; }
-
-        
         public string StoredValue { get; set; }
     }
 }

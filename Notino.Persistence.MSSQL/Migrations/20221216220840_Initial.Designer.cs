@@ -9,7 +9,7 @@ using Notino.Persistence.MSSQL;
 namespace Notino.Persistence.MSSQL.Migrations
 {
     [DbContext(typeof(DocumentDbContext))]
-    [Migration("20221211175440_Initial")]
+    [Migration("20221216220840_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -25,7 +25,7 @@ namespace Notino.Persistence.MSSQL.Migrations
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("Value")
+                    b.Property<string>("RawJson")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -48,7 +48,7 @@ namespace Notino.Persistence.MSSQL.Migrations
                     b.ToTable("DocumentTags");
                 });
 
-            modelBuilder.Entity("Notino.Domain.Tag", b =>
+            modelBuilder.Entity("Notino.Domain.string", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -56,6 +56,9 @@ namespace Notino.Persistence.MSSQL.Migrations
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RawJson")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -71,7 +74,7 @@ namespace Notino.Persistence.MSSQL.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Notino.Domain.Tag", "Tag")
+                    b.HasOne("Notino.Domain.string", "Tag")
                         .WithMany("DocumentTag")
                         .HasForeignKey("TagId")
                         .OnDelete(DeleteBehavior.Cascade)
