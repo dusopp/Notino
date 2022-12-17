@@ -34,7 +34,10 @@ namespace Notino.API
         public void ConfigureServices(IServiceCollection services)
         {
             AddSwaggerDoc(services);
-            services.AddDistributedMemoryCache();
+
+            //for develompment purpose this type of cachce is good enough
+            //for production lets say, redis would be an option, NOT ENOUGH TIME
+            services.AddDistributedMemoryCache();            
 
             services.Configure<PersistenceSettings>(Configuration.GetSection(nameof(PersistenceSettings)));
             services.Configure<CacheSettings>(Configuration.GetSection(nameof(CacheSettings)));

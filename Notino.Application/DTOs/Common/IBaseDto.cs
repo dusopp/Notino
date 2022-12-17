@@ -1,6 +1,6 @@
 ﻿namespace Notino.Application.DTOs.Common
 {
-    public abstract class BaseDto<TKey>
+    public interface IBaseDto<TKey>
     {
         public TKey Id { get; set; }
     }

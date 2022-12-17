@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Notino.Application.Contracts.Messaging;
+using Notino.Application.DTOs.Common;
 using Notino.Application.Settings;
 using System;
 using System.Collections.Generic;
@@ -14,7 +15,8 @@ using System.Threading.Tasks;
 namespace Notino.Application.Behaviours
 {
     public class CachingBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
-        where TRequest : ICacheableQuery<TResponse>
+        where TRequest : class, ICacheableQuery<TResponse>
+        where TResponse : class, IRawResponseDto
     {
         private readonly IDistributedCache _cache;
         private readonly ILogger _logger;
@@ -44,20 +46,25 @@ namespace Notino.Application.Behaviours
                 var options = new DistributedCacheEntryOptions { 
                     SlidingExpiration = slidingExpiration 
                 };
+                
+                var serializedData = Encoding
+                    .Default
+                    .GetBytes(JsonConvert.SerializeObject(response));
 
-                var serializedData = Encoding.Default.GetBytes(JsonConvert.SerializeObject(response));
                 await _cache
-                    .SetAsync((string)request.CacheKey, serializedData, options, cancellationToken);
+                    .SetAsync(request.CacheKey, serializedData, options, cancellationToken);
                 
                 return response;
             }
 
             var cachedResponse = await _cache.
-                GetAsync((string)request.CacheKey, cancellationToken);
+                GetAsync(request.CacheKey, cancellationToken);
 
             if (cachedResponse != null)
             {
-                response = JsonConvert.DeserializeObject<TResponse>(Encoding.Default.GetString(cachedResponse));
+                response = JsonConvert
+                    .DeserializeObject<TResponse>(Encoding.Default.GetString(cachedResponse));
+
                 _logger.LogInformation($"Fetched from Cache -> '{request.CacheKey}'.");
             }
             else

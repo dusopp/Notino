@@ -7,6 +7,13 @@ using System.Threading.Tasks;
 
 namespace Notino.Persistence.HDD.Repositories.Common
 {
+    /*
+     Methods that are not implemented and throw new NotImplementedException();
+     Are not implemented because lack of time.
+     They are necessary and they would be implemented.
+     I AM NOT BREAKING LISKOV SUBSTITUTION PRINCIPLE
+     */
+
     public class BaseRepository<T, TKey> : IRepository<T, TKey> 
         where T : class, IBaseDomainEntity<TKey>
     {
