@@ -58,7 +58,7 @@ namespace Notino.Application.PersistenceOrchestration.Document
                 throw;
             }
 
-            await unitOfWork.Save();
+            await unitOfWork.SaveAsync();
         }
 
         //public override Task AddAsync(Domain.Document document, IEnumerable<string> tagNames)

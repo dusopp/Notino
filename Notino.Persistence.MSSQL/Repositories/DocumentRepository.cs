@@ -22,7 +22,7 @@ namespace Notino.Persistence.MSSQL.Repositories
         public async Task AddDocumentWithTagsAsync(Document document, IEnumerable<string> tagNames)
         {            
             //tototo
-            if (await Exists(document.Id))
+            if (await ExistsAsync(document.Id))
                 throw new AlreadyExistsException(nameof(Document), document.Id); 
 
             var foundTags = await _dbContext.Tags               
@@ -71,7 +71,7 @@ namespace Notino.Persistence.MSSQL.Repositories
                     _dbContext.DocumentTags.Remove(documentTag);
                 }
 
-                await Delete(document);
+                await DeleteAsync(document);
             }
             //remove
             await _dbContext.SaveChangesAsync();

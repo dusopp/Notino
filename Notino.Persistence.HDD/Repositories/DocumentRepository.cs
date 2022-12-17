@@ -24,12 +24,12 @@ namespace Notino.Persistence.HDD.Repositories
         public async Task AddDocumentWithTagsAsync(Document document, IEnumerable<string> tagNames)
         {          
             
-            if(await Exists(document.Id))
+            if(await ExistsAsync(document.Id))
                 throw new AlreadyExistsException(nameof(Document), document.Id);
 
             using (await asyncLock.LockAsync())
             {
-                var exists = await Exists(document.Id);
+                var exists = await ExistsAsync(document.Id);
                 if (!exists)
                 {
                     await File
@@ -43,7 +43,7 @@ namespace Notino.Persistence.HDD.Repositories
 
         public async Task DeleteDocumentWithTagsAsync(string id)
         {
-            await DeleteById(id);           
+            await DeleteByIdAsync(id);           
         }
     }
 }

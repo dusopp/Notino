@@ -5,10 +5,10 @@ using System.Threading.Tasks;
 
 namespace Notino.Application.PersistenceOrchestration.Common
 {
-    /*
+    /*   
     
-
-    zvazit generickost?
+    For future consideration, think if generic solution is not overkill.   
+     
      */
     public abstract class BasePersistenceOrchestrator<TKey> : IDocumentPersistenceOrchestrator        
     {

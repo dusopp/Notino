@@ -5,15 +5,15 @@ namespace Notino.Application.Contracts.Persistence
     public interface IRepository<TEntity, TKey> where TEntity : class
     {   
 
-        Task<TEntity> GetById(TKey id);
+        Task<TEntity> GetByIdAsync(TKey id);
 
-        Task Add(TEntity entity);
+        Task AddAsync(TEntity entity);
 
-        Task Delete(TEntity entity);
+        Task DeleteAsync(TEntity entity);
 
-        Task DeleteById(TKey id);
+        Task DeleteByIdAsync(TKey id);
 
-        Task<bool> Exists(TKey id);        
+        Task<bool> ExistsAsync(TKey id);        
         
     }
 }

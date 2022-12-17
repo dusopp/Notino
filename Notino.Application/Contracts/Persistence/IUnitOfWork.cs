@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 
 namespace Notino.Application.Contracts.Persistence
 {
@@ -9,6 +6,10 @@ namespace Notino.Application.Contracts.Persistence
     {
         IDocumentRepository DocumentRepository { get; }        
 
-        Task Save();
+        /*
+         In current solution this method maybe breaks LSP principle. 
+         Particularly, in HDD based persistence implementaction.         
+         */
+        Task SaveAsync();
     }
 }

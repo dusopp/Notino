@@ -23,7 +23,7 @@ namespace Notino.Application.Features.Document.Handlers.Queries
           
             var document = await _unitOfWork
                 .DocumentRepository
-                .GetById(request.Id);
+                .GetByIdAsync(request.Id);
 
             if (document == null)
                 throw new NotFoundException(ValidationMessages.Id, request.Id);

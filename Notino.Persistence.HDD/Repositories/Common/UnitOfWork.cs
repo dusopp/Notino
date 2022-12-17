@@ -19,7 +19,7 @@ namespace Notino.Persistence.HDD.Repositories.Common
             _documentRepo = documentRepository;
         }
 
-        public async Task Save()
+        public async Task SaveAsync()
         {
             
         }

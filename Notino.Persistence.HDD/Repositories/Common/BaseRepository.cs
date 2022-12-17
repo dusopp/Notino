@@ -25,27 +25,27 @@ namespace Notino.Persistence.HDD.Repositories.Common
             this.entityName = entityName;
         }
          
-        public async Task Add(T entity)
+        public async Task AddAsync(T entity)
         {
             throw new NotImplementedException();
         }
 
-        public async Task Delete(T entity)
+        public async Task DeleteAsync(T entity)
         {
-            await DeleteById(entity.Id);
+            await DeleteByIdAsync(entity.Id);
         }
 
-        public async Task DeleteById(TKey id)
+        public async Task DeleteByIdAsync(TKey id)
         {
             await Task.Run(() => File.Delete(GetFileName(id)));
         }
 
-        public Task<bool> Exists(TKey id)
+        public Task<bool> ExistsAsync(TKey id)
         {
             return Task.FromResult(File.Exists(GetFileName(id)));
         }
 
-        public async Task<T> GetById(TKey id)
+        public async Task<T> GetByIdAsync(TKey id)
         {
             var fileContent = await File.ReadAllTextAsync("testtt.txt"); //GetFileName(id)
 
