@@ -11,5 +11,7 @@ namespace Notino.Domain.Common
     public interface IBaseDomainEntity<TKey>
     {
         TKey Id { get; set; }
+
+        string RawJson { get; set; }
     }
 }

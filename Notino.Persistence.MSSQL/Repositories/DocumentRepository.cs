@@ -57,12 +57,12 @@ namespace Notino.Persistence.MSSQL.Repositories
             await _dbContext.Documents.AddAsync(document);          
         }
 
-        public async Task DeleteDocumentWithTagsAsync(string documentId)
+        public async Task DeleteDocumentWithTagsAsync(string id)
         {
             var document = await _dbContext
                 .Documents
                 .Include(x => x.DocumentTag)
-                .SingleOrDefaultAsync(d => d.Id == documentId);
+                .SingleOrDefaultAsync(d => d.Id == id);
 
             if (document != null)
             {
@@ -76,5 +76,6 @@ namespace Notino.Persistence.MSSQL.Repositories
             //remove
             await _dbContext.SaveChangesAsync();
         }
+
     }
 }

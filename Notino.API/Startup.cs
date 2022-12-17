@@ -34,7 +34,10 @@ namespace Notino.API
         public void ConfigureServices(IServiceCollection services)
         {
             AddSwaggerDoc(services);
+            services.AddDistributedMemoryCache();
+
             services.Configure<PersistenceSettings>(Configuration.GetSection(nameof(PersistenceSettings)));
+            services.Configure<CacheSettings>(Configuration.GetSection(nameof(CacheSettings)));
             services.AddOptions();
 
             services.ConfigureApplicationServices();  
@@ -57,12 +60,12 @@ namespace Notino.API
                     .PropertyNamingPolicy = null
                 );
            
-            services.AddMessagePack(options => { 
-                options.MediaTypes.Add("application/x-msgpack");
+            //services.AddMessagePack(options => { 
+            //    options.MediaTypes.Add("application/x-msgpack");
                
-            });
+            //});
 
-            services.AddMemoryCache();
+            
         }
 
         private void AddSwaggerDoc(IServiceCollection services)

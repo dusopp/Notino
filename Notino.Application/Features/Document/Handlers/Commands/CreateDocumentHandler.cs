@@ -24,14 +24,13 @@ namespace Notino.Application.Features.Document.Handlers.Commands
 
         //tototo return type skontrolovat
         public async Task<Response> Handle(CreateDocumentCommand request, CancellationToken cancellationToken)
-        {           
-
+        {          
             var response = new Response();
 
             var newDocument = new Domain.Document()
             {
                 Id = request.DocumentDto.Id,
-                Value = JsonConvert.SerializeObject(request.DocumentDto)
+                RawJson = JsonConvert.SerializeObject(request.DocumentDto)
             };
 
             await storageOrchestrator.AddAsync(newDocument, request.DocumentDto.Tags);

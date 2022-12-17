@@ -1,4 +1,5 @@
-﻿using Notino.Application.DTOs.Common;
+﻿using Newtonsoft.Json;
+using Notino.Application.DTOs.Common;
 using System.Collections.Generic;
 using System.Dynamic;
 
@@ -10,8 +11,10 @@ namespace Notino.Application.DTOs.Document
 
         public ExpandoObject Data { get; set; }
 
+        
         public string RawResponse { get; set; }
 
+        
         public string StoredValue { get; set; }
 
     }

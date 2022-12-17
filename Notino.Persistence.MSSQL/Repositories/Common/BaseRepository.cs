@@ -35,9 +35,10 @@ namespace Notino.Persistence.MSSQL.Repositories.Common
             _dbContext.Set<TEntity>().Remove(entity);
         }
 
-        public async Task<TKey> DeleteById(TKey entity)
+        public async Task DeleteById(TKey id)
         {
             throw new System.NotImplementedException();
         }
+
     }
 }

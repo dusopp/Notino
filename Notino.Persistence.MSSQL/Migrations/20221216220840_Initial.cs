@@ -11,7 +11,7 @@ namespace Notino.Persistence.MSSQL.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(nullable: false),
-                    Value = table.Column<string>(nullable: true)
+                    RawJson = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -24,6 +24,7 @@ namespace Notino.Persistence.MSSQL.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    RawJson = table.Column<string>(nullable: true),
                     Name = table.Column<string>(nullable: true)
                 },
                 constraints: table =>

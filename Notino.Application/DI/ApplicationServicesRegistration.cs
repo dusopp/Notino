@@ -17,12 +17,12 @@ namespace Notino.Application.DI
         {
             var applicationAssembly = Assembly.GetExecutingAssembly();           
 
-            services.AddMediatR(applicationAssembly);
-            
+            services.AddMediatR(applicationAssembly);            
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
+            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(CachingBehavior<,>));
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ResponseAdaptationBehaviour<,>));
             services.AddValidatorsFromAssembly(applicationAssembly);
-            services.AddSingleton<IApplicationState, ApplicationMemoryCache>();
+            //services.AddSingleton<IApplicationState, ApplicationMemoryCache>();
             services.AddScoped<IDocumentPersistenceOrchestrator, DocumentPersistenceOrchestrator>();
 
             return services;

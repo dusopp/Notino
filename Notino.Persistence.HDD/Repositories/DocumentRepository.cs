@@ -1,4 +1,5 @@
-﻿using Notino.Application.AsyncronousConstructs;
+﻿using Newtonsoft.Json;
+using Notino.Application.AsyncronousConstructs;
 using Notino.Application.Contracts.Persistence;
 using Notino.Application.Exceptions;
 using Notino.Domain;
@@ -20,7 +21,6 @@ namespace Notino.Persistence.HDD.Repositories
         {
         }
 
-
         public async Task AddDocumentWithTagsAsync(Document document, IEnumerable<string> tagNames)
         {          
             
@@ -32,15 +32,18 @@ namespace Notino.Persistence.HDD.Repositories
                 var exists = await Exists(document.Id);
                 if (!exists)
                 {
-                    await File.AppendAllTextAsync(GetFileName(document.Id), document.Value);
+                    await File
+                        .AppendAllTextAsync(
+                            GetFileName(document.Id), 
+                            document.RawJson
+                        );
                 }
             }          
         }
 
-
         public async Task DeleteDocumentWithTagsAsync(string id)
-        {          
-            await Task.Run(() => File.Delete(GetFileName(id)));           
+        {
+            await DeleteById(id);           
         }
     }
 }

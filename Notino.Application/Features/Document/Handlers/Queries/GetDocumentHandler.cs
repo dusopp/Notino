@@ -13,15 +13,10 @@ namespace Notino.Application.Features.Document.Handlers.Queries
 {
     public class GetDocumentHandler : IRequestHandler<GetDocumentRequest, DocumentDto>
     {
-        private readonly IApplicationState _applicationState;
         private readonly IUnitOfWork _unitOfWork;        
 
-        public GetDocumentHandler(
-            IApplicationState applicationState,
-            IUnitOfWork unitOfWork
-            )
-        {
-            _applicationState = applicationState;
+        public GetDocumentHandler(IUnitOfWork unitOfWork)
+        {            
             _unitOfWork = unitOfWork;            
         }
 
@@ -35,9 +30,9 @@ namespace Notino.Application.Features.Document.Handlers.Queries
             if (document == null)
                 throw new NotFoundException(ValidationMessages.Id, request.Id);
 
-            var documentDto = JsonConvert.DeserializeObject<DocumentDto>(document.Value);
+            var documentDto = JsonConvert.DeserializeObject<DocumentDto>(document.RawJson);
 
-            documentDto.StoredValue = document.Value;
+            documentDto.StoredValue = document.RawJson;
 
             return documentDto;
         }
