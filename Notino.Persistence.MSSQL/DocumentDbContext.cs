@@ -1,9 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Notino.Domain;
+using Notino.Persistence.MSSQL.Repositories.Common;
 
 namespace Notino.Persistence.MSSQL
 {
-    public class DocumentDbContext:DbContext
+    public class DocumentDbContext: BaseDbContext
     {
         public DocumentDbContext(DbContextOptions<DocumentDbContext> dbContextOptions) 
             : base(dbContextOptions)

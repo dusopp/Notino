@@ -6,7 +6,10 @@ namespace Notino.Application.Contracts.Persistence
 {
     public interface IDocumentRepository : IRepository<Document,string>
     {        
-        Task AddDocumentWithTagsAsync(Document document, IEnumerable<string> tagNames);
+        Task AddDocumentWithTagsAsync(
+            Document document, 
+            IEnumerable<string> tagNames, 
+            bool isUpdate = false);
 
         Task UpdateDocumentWithTagsAsync(Document documentToUpdate, IEnumerable<string> updatedDocumentTagNames);
 

@@ -1,10 +1,14 @@
-﻿using Notino.Application.Contracts.Persistence;
+﻿using Microsoft.EntityFrameworkCore;
+using Notino.Application.Contracts.Persistence;
+using Notino.Domain.Common;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Notino.Persistence.MSSQL.Repositories.Common
 {
     public class BaseRepository<TEntity, TKey> : IRepository<TEntity, TKey> 
-        where TEntity : class
+        where TEntity : class, IBaseDomainEntity<TKey>, ISoftDeletableEntity
+        where TKey : class
     {
         private readonly DocumentDbContext _dbContext;
 
@@ -23,7 +27,7 @@ namespace Notino.Persistence.MSSQL.Repositories.Common
         {
             return await _dbContext
                 .Set<TEntity>()
-                .FindAsync(id);
+                .SingleOrDefaultAsync(t => t.Id == id && !t.IsDeleted);
         }       
 
         public async Task AddAsync(TEntity entity)

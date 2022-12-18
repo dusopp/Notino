@@ -54,12 +54,22 @@ namespace Notino.API.Controllers
 
 
         [HttpPost]
-        [ProducesResponseType(typeof(Response), StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status201Created)]
         public async Task<IActionResult> CreateDocument([FromBody] DocumentDto document)
         {
             var command = new CreateDocumentCommand { DocumentDto = document };
-            var repsonse = await _mediator.Send(command);
-            return CreatedAtAction(nameof(CreateDocument), new { documentId = document.Id});
+            await _mediator.Send(command);
+            return NoContent();
+        }
+
+        [HttpPut]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> UpdateDocument([FromBody] DocumentDto document)
+        {
+            var command = new UpdateDocumentCommand { DocumentDto = document };
+            await _mediator.Send(command);
+            return NoContent();
         }
     }
 }

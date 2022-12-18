@@ -19,9 +19,14 @@ namespace Notino.Persistence.MSSQL.Repositories
             _dbContext = dbContext;
         }       
 
-        public async Task AddDocumentWithTagsAsync(Document document, IEnumerable<string> newDocumentTagNames)
-        {  
-            if (await ExistsAsync(document.Id))
+        public async Task AddDocumentWithTagsAsync
+            (Document document, 
+            IEnumerable<string> newDocumentTagNames,
+            bool isUpdate = false)
+        {
+            var storedDocument = await GetByIdAsync(document.Id);
+
+            if (storedDocument != null && !isUpdate)
                 throw new AlreadyExistsException(nameof(Document), document.Id);
 
             var storedTags = await GetStoredTags(newDocumentTagNames);
@@ -84,11 +89,15 @@ namespace Notino.Persistence.MSSQL.Repositories
             var document = await _dbContext
                 .Documents
                 .Include(x => x.DocumentTag)                
-                .SingleOrDefaultAsync(d => d.Id == documentToUpdate.Id);
+                .SingleOrDefaultAsync(d => d.Id == documentToUpdate.Id && !d.IsDeleted);
 
             if (document == null)
                 throw new NotFoundException(nameof(Document), document.Id);
 
+            document.IsDeleted = true;           
+            await AddDocumentWithTagsAsync(documentToUpdate, updatedDocumentTagNames, true);
+
+            /*
             document.RawJson = documentToUpdate.RawJson;
 
             var storedTags = await GetStoredTags(updatedDocumentTagNames);
@@ -111,6 +120,7 @@ namespace Notino.Persistence.MSSQL.Repositories
                 _dbContext.DocumentTags.Remove(
                     new DocumentTag { DocumentId = documentToUpdate.Id, TagId = tag.Id });
             }
+            */
         }
     }
 }

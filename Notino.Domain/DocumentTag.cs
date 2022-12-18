@@ -4,6 +4,8 @@
     {
         public string DocumentId { get; set; }
 
+        public int DocumentInternalId { get; set; }
+
         public Document Document { get; set; }
 
         public int TagId { get; set; }

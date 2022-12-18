@@ -2,8 +2,7 @@
 
 namespace Notino.Application.Features.Document.Requests.Commands
 {
-    public class CreateDocumentCommand : BaseDocumentCommand
+    public class UpdateDocumentCommand : BaseDocumentCommand
     {
-            
     }
 }

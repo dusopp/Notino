@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using MediatR;
+using Newtonsoft.Json;
 using Notino.Application.Contracts.Messaging;
 using Notino.Application.Contracts.Persistence;
 using Notino.Application.Contracts.PersistenceOrchestration;
@@ -15,18 +16,18 @@ namespace Notino.Application.Features.Document.Handlers.Commands
         private readonly IUnitOfWork unitOfWork;
         private readonly IDocumentRepository _documentRepository;
 
-        public CreateDocumentHandler(IDocumentPersistenceOrchestrator storageOrchestrator, IUnitOfWork unitOfWork)
+        public CreateDocumentHandler(
+            IDocumentPersistenceOrchestrator storageOrchestrator,
+            IUnitOfWork unitOfWork)
         {
             this.storageOrchestrator = storageOrchestrator;
             this.unitOfWork = unitOfWork;
             //_documentRepository = documentRepository;
         }
-
-        //tototo return type skontrolovat
+        
+        //refactor return type
         public async Task<Response> Handle(CreateDocumentCommand request, CancellationToken cancellationToken)
-        {          
-            var response = new Response();
-
+        {         
             var newDocument = new Domain.Document()
             {
                 Id = request.DocumentDto.Id,
@@ -40,7 +41,7 @@ namespace Notino.Application.Features.Document.Handlers.Commands
             //await unitOfWork.DocumentRepository.UpdateDocumentWithTagsAsync(newDocument, request.DocumentDto.Tags);
             //await unitOfWork.SaveAsync();
 
-            return response;
+            return new Response();
         }
     }
 }

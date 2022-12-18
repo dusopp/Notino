@@ -21,7 +21,7 @@ namespace Notino.Persistence.HDD.Repositories
         {
         }
 
-        public async Task AddDocumentWithTagsAsync(Document document, IEnumerable<string> tagNames)
+        public async Task AddDocumentWithTagsAsync(Document document, IEnumerable<string> tagNames, bool isUpdate = false)
         {          
             
             if(await ExistsAsync(document.Id))
