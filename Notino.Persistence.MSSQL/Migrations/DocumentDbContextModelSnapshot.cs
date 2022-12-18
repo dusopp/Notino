@@ -46,7 +46,7 @@ namespace Notino.Persistence.MSSQL.Migrations
                     b.ToTable("DocumentTags");
                 });
 
-            modelBuilder.Entity("Notino.Domain.string", b =>
+            modelBuilder.Entity("Notino.Domain.Tag", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -54,9 +54,6 @@ namespace Notino.Persistence.MSSQL.Migrations
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("RawJson")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -72,7 +69,7 @@ namespace Notino.Persistence.MSSQL.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Notino.Domain.string", "Tag")
+                    b.HasOne("Notino.Domain.Tag", "Tag")
                         .WithMany("DocumentTag")
                         .HasForeignKey("TagId")
                         .OnDelete(DeleteBehavior.Cascade)

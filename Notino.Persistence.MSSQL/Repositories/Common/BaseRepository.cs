@@ -3,7 +3,8 @@ using System.Threading.Tasks;
 
 namespace Notino.Persistence.MSSQL.Repositories.Common
 {
-    public class BaseRepository<TEntity, TKey> : IRepository<TEntity, TKey> where TEntity : class
+    public class BaseRepository<TEntity, TKey> : IRepository<TEntity, TKey> 
+        where TEntity : class
     {
         private readonly DocumentDbContext _dbContext;
 

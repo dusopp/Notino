@@ -50,5 +50,7 @@ namespace Notino.Application.PersistenceOrchestration.Common
                 await RevertAsync(revertTasks, id, revertFuncs, ++revertCnt);
             }
         }
+
+        //public abstract Task UpdateAsync(Domain.Document entity, IEnumerable<string> tagNames);
     }
 }

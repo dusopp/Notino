@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Notino.Domain
+﻿namespace Notino.Domain
 {
     public class DocumentTag
     {
@@ -12,6 +8,6 @@ namespace Notino.Domain
 
         public int TagId { get; set; }
 
-        public @string Tag { get; set; }
+        public Tag Tag { get; set; }
     }
 }

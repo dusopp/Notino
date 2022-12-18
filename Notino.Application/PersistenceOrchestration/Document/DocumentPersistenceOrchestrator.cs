@@ -15,8 +15,7 @@ namespace Notino.Application.PersistenceOrchestration.Document
         private readonly IUnitOfWork unitOfWork;
 
         public DocumentPersistenceOrchestrator(IOptions<PersistenceSettings> options,
-            IEnumerable<IDocumentRepository> repos
-            ,IUnitOfWork unitOfWork)
+            IEnumerable<IDocumentRepository> repos, IUnitOfWork unitOfWork)
         {
             var settings = options.Value;
             _documentRepositories = new List<IDocumentRepository>();
@@ -61,37 +60,6 @@ namespace Notino.Application.PersistenceOrchestration.Document
             await unitOfWork.SaveAsync();
         }
 
-        //public override Task AddAsync(Domain.Document document, IEnumerable<string> tagNames)
-        //{
-        //    throw new NotImplementedException();
-        //}
-
-        //protected override async Task Revert(List<Task<string>> tasks, string id, int revertCnt = 0)
-        //{
-        //    var revertTasks = new List<Task<string>>();
-
-        //    for (int i = 0; i < tasks.Count; i++)
-        //    {
-        //        if (!tasks[i].IsFaulted)
-        //        {
-        //            revertTasks.Add(_documentRepositories[i].DeleteById(id)); 
-        //        }
-        //    }
-
-        //    var result = Task.WhenAll(tasks);
-        //    try
-        //    {
-        //        await result;
-        //    }
-        //    catch
-        //    {
-        //        if(revertCnt > 3)
-        //            throw;
-
-        //        await Revert(revertTasks, id, ++revertCnt);
-        //    }
-        //}
-
-
+        //public override Task UpdateAsync(Domain.Document entity, IEnumerable<string> tagNames);
     }
 }

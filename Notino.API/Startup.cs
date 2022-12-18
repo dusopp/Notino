@@ -47,7 +47,7 @@ namespace Notino.API
             
             //here order matters!
             //primary storage has to be registered last
-            services.ConfigureSecondaryPersistenceServices(Configuration);
+            //services.ConfigureSecondaryPersistenceServices(Configuration);
             services.ConfigurePrimaryPersistenceServices(Configuration);
 
         

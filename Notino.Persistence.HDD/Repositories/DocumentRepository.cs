@@ -45,5 +45,10 @@ namespace Notino.Persistence.HDD.Repositories
         {
             await DeleteByIdAsync(id);           
         }
+
+        public Task UpdateDocumentWithTagsAsync(Document documentToUpdate, IEnumerable<string> updatedDocumentTagNames)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

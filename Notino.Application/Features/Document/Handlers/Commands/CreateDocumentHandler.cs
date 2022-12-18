@@ -36,7 +36,10 @@ namespace Notino.Application.Features.Document.Handlers.Commands
             await storageOrchestrator.AddAsync(newDocument, request.DocumentDto.Tags);
 
             //await unitOfWork.DocumentRepository.DeleteDocumentWithTagsAsync(newDocument.Id);
- 
+
+            //await unitOfWork.DocumentRepository.UpdateDocumentWithTagsAsync(newDocument, request.DocumentDto.Tags);
+            //await unitOfWork.SaveAsync();
+
             return response;
         }
     }

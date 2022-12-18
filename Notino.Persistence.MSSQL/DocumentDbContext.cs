@@ -14,11 +14,12 @@ namespace Notino.Persistence.MSSQL
         {
             modelBuilder
                 .ApplyConfigurationsFromAssembly(typeof(DocumentDbContext).Assembly);
+           
         }
 
         public DbSet<Document> Documents { get; set; }
 
-        public DbSet<@string> Tags { get; set; }
+        public DbSet<Tag> Tags { get; set; }
 
         public DbSet<DocumentTag> DocumentTags { get; set; }
     }
