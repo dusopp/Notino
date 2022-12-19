@@ -1,13 +1,10 @@
 ﻿using Moq;
 using Notino.Application.Contracts.Persistence;
-using Notino.Application.Contracts.PersistenceOrchestration;
-using Notino.Application.Exceptions;
 using Notino.Application.PersistenceOrchestration.Document;
 using Notino.Application.UnitTests.Mocks;
 using Shouldly;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
@@ -21,10 +18,8 @@ namespace Notino.Application.UnitTests.Orchestrators
         private readonly DocumentPersistenceOrchestrator _documentPersistenceOrchestrator;
 
         public DocumentOrchestratorTests()
-        {
-                      
-            _mockDocumentRepo = MockDocumentRepository.GetDocumentRepository();            
-
+        {                      
+            _mockDocumentRepo = MockDocumentRepository.GetDocumentRepository();           
             _documentPersistenceOrchestrator = new DocumentPersistenceOrchestrator(
                 new List<IDocumentRepository>(){ _mockDocumentRepo.Object }               
             );           
@@ -52,7 +47,7 @@ namespace Notino.Application.UnitTests.Orchestrators
         }
 
         [Fact]
-        public async Task Add_Document_IsNull_ThrowsArgumentNullException()
+        public async Task Add_DocumentIsNull_ThrowsArgumentNullException()
         {
             Domain.Document documentToAdd = null;
 
@@ -67,7 +62,7 @@ namespace Notino.Application.UnitTests.Orchestrators
 
 
         [Fact]
-        public async Task Add_TagNames_IsNull_ThrowsArgumentNullException()
+        public async Task Add_TagNamesIsNull_ThrowsArgumentNullException()
         {
             var documentToAdd = new Domain.Document();
 
@@ -91,6 +86,7 @@ namespace Notino.Application.UnitTests.Orchestrators
                 DocumentTag = new LinkedList<Domain.DocumentTag>()
             };
 
+            //_mockDocumentRepo.Setup(r => r.);
             await _documentPersistenceOrchestrator
                 .UpdateAsync(documentToAdd, new List<string>() { "tag" }, CancellationToken.None);
 
@@ -104,7 +100,7 @@ namespace Notino.Application.UnitTests.Orchestrators
         }
 
         [Fact]
-        public async Task Update_Document_IsNull_ThrowsArgumentNullException()
+        public async Task Update_DocumentIsNull_ThrowsArgumentNullException()
         {
             Domain.Document documentToAdd = null;
 

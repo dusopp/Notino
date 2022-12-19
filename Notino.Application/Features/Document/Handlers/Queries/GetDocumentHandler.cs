@@ -24,7 +24,7 @@ namespace Notino.Application.Features.Document.Handlers.Queries
                 .GetByIdAsync(request.Id, ct);
 
             if (document == null)
-                throw new NotFoundException(ValidationMessages.Id, request.Id);
+                throw new NotFoundException(nameof(Domain.Document), request.Id);
 
             var rawReposnseDto = new RawResponseDto()
             { 

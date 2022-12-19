@@ -21,13 +21,13 @@ namespace Notino.API.Middleware
     public class ExceptionMiddleware
     {
         private readonly RequestDelegate _next;
-        private readonly ILogger<ExceptionMiddleware> logger;
+        private readonly ILogger<ExceptionMiddleware> _logger;
 
                
         public ExceptionMiddleware(RequestDelegate next, ILogger<ExceptionMiddleware> logger)
         {
             _next = next;
-            this.logger = logger;
+            _logger = logger;
         }
 
         public async Task InvokeAsync(HttpContext httpContext)
@@ -36,10 +36,14 @@ namespace Notino.API.Middleware
             {
                 await _next(httpContext);
             }
+            catch (OperationCanceledException opex)
+            {
+                _logger.LogInformation($"Request cancelled: {httpContext.Request.Path}");
+                await HandleExceptionAsync(httpContext, opex);
+            }
             catch (Exception ex)
             {
-                logger.LogError(ex, $"Error: {httpContext.Request.Path}");
-
+                _logger.LogError(ex, $"Error: {httpContext.Request.Path}");
                 await HandleExceptionAsync(httpContext, ex);
             }
         }
@@ -47,36 +51,41 @@ namespace Notino.API.Middleware
         private Task HandleExceptionAsync(HttpContext httpContext, Exception ex)
         {            
             httpContext.Response.ContentType = "application/json";
-            HttpStatusCode statusCode = HttpStatusCode.ServiceUnavailable;
-            string errorMessage = "Service not available";
+            HttpStatusCode statusCode = HttpStatusCode.InternalServerError;
+            string errorMessage = "Internal server error.";
             IEnumerable<string> errors = null;
             
             switch (ex)
             {
-                case BadRequestException badRequestException:
+                case BadRequestException badRequestEx:
                     statusCode = HttpStatusCode.BadRequest;
-                    errorMessage = badRequestException.Message;
+                    errorMessage = badRequestEx.Message;
 
                     break;
-                case NotFoundException notFound:
+                case NotFoundException notFoundEx:
                     statusCode = HttpStatusCode.NotFound;
-                    errorMessage = notFound.Message;
+                    errorMessage = notFoundEx.Message;
 
                     break;
-                case ValidationException validationException:
+                case ValidationException validationEx:
                     statusCode = HttpStatusCode.BadRequest;
                     errorMessage = "Validation Error";
-                    errors = validationException.Errors;
+                    errors = validationEx.Errors;
                     
                     break;
-                case NotSupportedMediaTypeException notSupported:
+                case NotSupportedMediaTypeException notSupportedEx:
                     statusCode = HttpStatusCode.UnsupportedMediaType;
-                    errorMessage = notSupported.Message;
+                    errorMessage = notSupportedEx.Message;
 
                     break;
-                case AlreadyExistsException alreadyExistsException:
+                case AlreadyExistsException alreadyExistsEx:
                     statusCode = HttpStatusCode.Conflict;
-                    errorMessage = alreadyExistsException.Message;
+                    errorMessage = alreadyExistsEx.Message;
+
+                    break;
+                case OperationCanceledException operationCancelledEx:
+                    statusCode = HttpStatusCode.BadRequest;
+                    errorMessage = operationCancelledEx.Message;
 
                     break;
                 default:
