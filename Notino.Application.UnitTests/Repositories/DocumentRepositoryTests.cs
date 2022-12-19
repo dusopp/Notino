@@ -176,9 +176,8 @@ namespace Notino.Application.UnitTests.Repositories
                 IDocumentRepository docRepo = new DocumentRepository(context);
 
                 var result = await Should.ThrowAsync<NotFoundException>(async () => 
-                await docRepo.DeleteDocumentWithTagsAsync(
-                    documentToRemove.Id
-                ));
+                    await docRepo.DeleteDocumentWithTagsAsync(documentToRemove.Id)
+                );
 
                 result.Message.ShouldBe($"Document with Id:'{documentToRemove.Id}' was not found");
             }

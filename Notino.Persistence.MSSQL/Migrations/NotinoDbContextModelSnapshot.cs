@@ -9,7 +9,7 @@ using Notino.Persistence.MSSQL;
 namespace Notino.Persistence.MSSQL.Migrations
 {
     [DbContext(typeof(NotinoDbContext))]
-    partial class DocumentDbContextModelSnapshot : ModelSnapshot
+    partial class NotinoDbContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
@@ -75,9 +75,6 @@ namespace Notino.Persistence.MSSQL.Migrations
 
                     b.Property<DateTime>("DateCreated")
                         .HasColumnType("datetime2");
-
-                    b.Property<int>("InternalId")
-                        .HasColumnType("int");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");

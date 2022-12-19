@@ -10,7 +10,7 @@ using Notino.Persistence.MSSQL;
 namespace Notino.Persistence.MSSQL.Migrations
 {
     [DbContext(typeof(NotinoDbContext))]
-    [Migration("20221218101034_Initial")]
+    [Migration("20221219081832_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -77,9 +77,6 @@ namespace Notino.Persistence.MSSQL.Migrations
 
                     b.Property<DateTime>("DateCreated")
                         .HasColumnType("datetime2");
-
-                    b.Property<int>("InternalId")
-                        .HasColumnType("int");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");

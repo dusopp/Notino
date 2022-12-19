@@ -30,7 +30,6 @@ namespace Notino.Persistence.MSSQL.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    InternalId = table.Column<int>(nullable: false),
                     DateCreated = table.Column<DateTime>(nullable: false),
                     LastModifiedDate = table.Column<DateTime>(nullable: false),
                     IsDeleted = table.Column<bool>(nullable: false),
