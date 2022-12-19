@@ -30,7 +30,7 @@ namespace Notino.API
         {
             using var scope = serviceProvider.CreateScope();
 
-            await using DocumentDbContext dbContext = scope.ServiceProvider.GetRequiredService<DocumentDbContext>();
+            await using NotinoDbContext dbContext = scope.ServiceProvider.GetRequiredService<NotinoDbContext>();
 
             await dbContext.Database.MigrateAsync();
         }

@@ -6,4 +6,5 @@ namespace Notino.Application.Contracts.Messaging
         where TCommand : ICommand<TResponse>
     {
     }
+
 }

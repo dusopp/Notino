@@ -72,7 +72,12 @@ namespace Notino.API.Middleware
                 case NotSupportedMediaTypeException notSupported:
                     statusCode = HttpStatusCode.UnsupportedMediaType;
                     errorMessage = notSupported.Message;
-                    
+
+                    break;
+                case AlreadyExistsException alreadyExistsException:
+                    statusCode = HttpStatusCode.Conflict;
+                    errorMessage = alreadyExistsException.Message;
+
                     break;
                 default:
                     break;

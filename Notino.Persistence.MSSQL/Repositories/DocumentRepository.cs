@@ -12,70 +12,119 @@ namespace Notino.Persistence.MSSQL.Repositories
 {
     public class DocumentRepository: BaseRepository<Document, string>, IDocumentRepository
     {
-        private readonly DocumentDbContext _dbContext;
+        private readonly NotinoDbContext _dbContext;
 
-        public DocumentRepository(DocumentDbContext dbContext) : base(dbContext)
+        public DocumentRepository(NotinoDbContext dbContext) : base(dbContext)
         {
             _dbContext = dbContext;
         }       
 
-        public async Task AddDocumentWithTagsAsync(Document document, IEnumerable<string> tagNames)
-        {            
-            //tototo
-            if (await ExistsAsync(document.Id))
-                throw new AlreadyExistsException(nameof(Document), document.Id); 
+        public async Task<Document> AddDocumentWithTagsAsync
+            (Document document, 
+            IEnumerable<string> newDocumentTagNames,
+            bool isUpdate = false)
+        {
+            var storedDocument = await GetByIdAsync(document.Id);
 
-            var foundTags = await _dbContext.Tags               
-                .Where(x => tagNames.Contains(x.Name))
-                .Select(x => x.Name)
-                .Distinct()
-                .ToListAsync();
+            if (storedDocument != null && !isUpdate)
+                throw new AlreadyExistsException(nameof(Document), document.Id);
 
-            var notFoundTags = tagNames
-                .Where(c => !foundTags.Any(x => x == c.ToLower()))
-                .ToList();
+            var storedTags = await GetStoredTags(newDocumentTagNames);
 
+            var newTags = GetNotStoredTags(newDocumentTagNames, storedTags);
 
-            if (notFoundTags.Count != 0)
-            {
-                await _dbContext
-                    .Tags
-                    .AddRangeAsync(
-                        notFoundTags.Select(tagName => new @string { Name = tagName})
-                    );
-            }
-
-            var tagsToMap = await _dbContext.Tags
-                        .Where(x => tagNames.Contains(x.Name))
-                        .Distinct()
-                        .ToListAsync();
-
-            document.DocumentTag = tagsToMap
+            document.DocumentTag = storedTags
                 .Select(t => new DocumentTag { DocumentId = document.Id, TagId = t.Id})
                 .ToList();
-
-            await _dbContext.Documents.AddAsync(document);          
+           
+            foreach (var newTag in 
+                newTags.Select(x => new DocumentTag { Document = document, Tag = x }))
+            {
+                document.DocumentTag.Add(newTag);
+            }
+            
+            await _dbContext.Documents.AddAsync(document);  
+            
+            return document;
         }
 
-        public async Task DeleteDocumentWithTagsAsync(string id)
+        private async Task<List<Tag>> GetStoredTags(IEnumerable<string> tagNames)
+        {
+           return await _dbContext.Tags
+                            .Where(x => tagNames.Contains(x.Name))
+                            .Distinct()
+                            .ToListAsync();
+        }
+
+        private IEnumerable<Tag> GetNotStoredTags(
+            IEnumerable<string> documentTagNames, 
+            IEnumerable<Tag> storedTags)
+        {
+            return documentTagNames
+                .Where(c => !storedTags.Any(x => x.Name == c))
+                .Select(tagName => new Tag { Name = tagName })
+                .ToList();
+        }
+
+        public async Task<string> DeleteDocumentWithTagsAsync(string id)
         {
             var document = await _dbContext
                 .Documents
                 .Include(x => x.DocumentTag)
                 .SingleOrDefaultAsync(d => d.Id == id);
 
-            if (document != null)
+            if(document == null)
+                throw new NotFoundException(nameof(Document), id);
+          
+            foreach (var documentTag in document.DocumentTag)
             {
-                foreach (var documentTag in document.DocumentTag)
-                {
-                    _dbContext.DocumentTags.Remove(documentTag);
-                }
-
-                await DeleteAsync(document);
+                _dbContext.DocumentTags.Remove(documentTag);
             }
-            //remove
-            await _dbContext.SaveChangesAsync();
+
+            document.IsDeleted = true;              
+           
+            return document.Id;
         }
 
+        public async Task<Document> UpdateDocumentWithTagsAsync(Document documentToUpdate, IEnumerable<string> updatedDocumentTagNames)
+        {
+            var document = await _dbContext
+                .Documents
+                .Include(x => x.DocumentTag)                
+                .SingleOrDefaultAsync(d => d.Id == documentToUpdate.Id && !d.IsDeleted);
+
+            if (document == null)
+                throw new NotFoundException(nameof(Document), documentToUpdate.Id);
+
+            document.IsDeleted = true;           
+            await AddDocumentWithTagsAsync(documentToUpdate, updatedDocumentTagNames, true);
+
+            return documentToUpdate;
+
+            /*
+            document.RawJson = documentToUpdate.RawJson;
+
+            var storedTags = await GetStoredTags(updatedDocumentTagNames);
+            var newTags = GetNotStoredTags(updatedDocumentTagNames, storedTags);
+
+            document.DocumentTag = storedTags
+                    .Select(t => new DocumentTag { DocumentId = document.Id, TagId = t.Id })                    
+                    .ToList();
+
+            foreach (var newTag in
+                newTags.Select(x => new DocumentTag { Document = document, Tag = x }))
+            {
+                document.DocumentTag.Add(newTag);
+            }
+
+            var storedTagsToRemove = storedTags.Where(t => !updatedDocumentTagNames.Contains(t.Name));
+
+            foreach (var tag in storedTagsToRemove)
+            {
+                _dbContext.DocumentTags.Remove(
+                    new DocumentTag { DocumentId = documentToUpdate.Id, TagId = tag.Id });
+            }
+            */
+        }
     }
 }

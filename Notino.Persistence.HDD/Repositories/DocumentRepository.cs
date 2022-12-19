@@ -21,7 +21,7 @@ namespace Notino.Persistence.HDD.Repositories
         {
         }
 
-        public async Task AddDocumentWithTagsAsync(Document document, IEnumerable<string> tagNames)
+        public async Task<Document> AddDocumentWithTagsAsync(Document document, IEnumerable<string> tagNames, bool isUpdate = false)
         {          
             
             if(await ExistsAsync(document.Id))
@@ -38,12 +38,21 @@ namespace Notino.Persistence.HDD.Repositories
                             document.RawJson
                         );
                 }
-            }          
+            }
+
+            return document;
         }
 
-        public async Task DeleteDocumentWithTagsAsync(string id)
+        public async Task<string> DeleteDocumentWithTagsAsync(string id)
         {
-            await DeleteByIdAsync(id);           
+            await DeleteByIdAsync(id);    
+            
+            return id;
+        }
+
+        public Task<Document> UpdateDocumentWithTagsAsync(Document documentToUpdate, IEnumerable<string> updatedDocumentTagNames)
+        {
+            throw new NotImplementedException();
         }
     }
 }

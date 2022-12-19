@@ -50,7 +50,7 @@ namespace Notino.Persistence.HDD.Repositories.Common
             var fileContent = await File.ReadAllTextAsync("testtt.txt"); //GetFileName(id)
 
             var result = JsonConvert.DeserializeObject<T>(fileContent);
-            result.RawJson = fileContent;
+            //result.RawJson = fileContent;
 
             return result;
         }

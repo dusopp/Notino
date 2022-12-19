@@ -1,11 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Notino.Domain;
+using Notino.Persistence.MSSQL.Repositories.Common;
 
 namespace Notino.Persistence.MSSQL
 {
-    public class DocumentDbContext:DbContext
+    public class NotinoDbContext: BaseDbContext
     {
-        public DocumentDbContext(DbContextOptions<DocumentDbContext> dbContextOptions) 
+        public NotinoDbContext(DbContextOptions<NotinoDbContext> dbContextOptions) 
             : base(dbContextOptions)
         {
         }
@@ -13,12 +14,13 @@ namespace Notino.Persistence.MSSQL
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder
-                .ApplyConfigurationsFromAssembly(typeof(DocumentDbContext).Assembly);
+                .ApplyConfigurationsFromAssembly(typeof(NotinoDbContext).Assembly);
+           
         }
 
         public DbSet<Document> Documents { get; set; }
 
-        public DbSet<@string> Tags { get; set; }
+        public DbSet<Tag> Tags { get; set; }
 
         public DbSet<DocumentTag> DocumentTags { get; set; }
     }

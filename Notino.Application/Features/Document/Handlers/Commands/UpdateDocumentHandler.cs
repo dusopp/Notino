@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using MediatR;
+using Newtonsoft.Json;
 using Notino.Application.Contracts.Messaging;
 using Notino.Application.Contracts.Persistence;
 using Notino.Application.Contracts.PersistenceOrchestration;
@@ -10,24 +11,19 @@ using System.Threading.Tasks;
 
 namespace Notino.Application.Features.Document.Handlers.Commands
 {
-    public class CreateDocumentHandler : ICommandHandler<CreateDocumentCommand, Response>
+    public class UpdateDocumentHandler : ICommandHandler<UpdateDocumentCommand, Response>
     {
         private readonly IDocumentPersistenceOrchestrator _docStorageOrchestrator;
-        private readonly IUnitOfWork unitOfWork;        
 
-        public CreateDocumentHandler(
-            IDocumentPersistenceOrchestrator docStorageOrchestrator 
-            //, IUnitOfWork unitOfWork //to delete for testing   
-            )
+        public UpdateDocumentHandler(
+            IDocumentPersistenceOrchestrator docStorageOrchestrator            
+        )
         {
             _docStorageOrchestrator = docStorageOrchestrator ??
                 throw new ArgumentNullException(nameof(docStorageOrchestrator));
-
-            //this.unitOfWork = unitOfWork;            
         }
         
-        //refactor return type
-        public async Task<Response> Handle(CreateDocumentCommand request, CancellationToken cancellationToken)
+        public async Task<Response> Handle(UpdateDocumentCommand request, CancellationToken cancellationToken)
         {         
             var newDocument = new Domain.Document()
             {
@@ -35,12 +31,7 @@ namespace Notino.Application.Features.Document.Handlers.Commands
                 RawJson = JsonConvert.SerializeObject(request.DocumentDto)
             };
 
-            await _docStorageOrchestrator.AddAsync(newDocument, request.DocumentDto.Tags);
-
-            //await unitOfWork.DocumentRepository.DeleteDocumentWithTagsAsync(newDocument.Id);
-
-            //await unitOfWork.DocumentRepository.UpdateDocumentWithTagsAsync(newDocument, request.DocumentDto.Tags);
-            //await unitOfWork.SaveAsync();
+            await _docStorageOrchestrator.UpdateAsync(newDocument, request.DocumentDto.Tags);
 
             return new Response();
         }

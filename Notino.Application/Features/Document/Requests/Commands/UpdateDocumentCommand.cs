@@ -3,7 +3,7 @@ using Notino.Application.Features.Document.Requests.Commands.Common;
 
 namespace Notino.Application.Features.Document.Requests.Commands
 {
-    public class CreateDocumentCommand : IBaseDocumentCommand
+    public class UpdateDocumentCommand : IBaseDocumentCommand
     {
         public DocumentDto DocumentDto { get; set; }
     }

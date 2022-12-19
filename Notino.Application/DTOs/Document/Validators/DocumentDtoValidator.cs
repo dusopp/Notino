@@ -1,10 +1,10 @@
 ﻿using FluentValidation;
 using Notino.Application.Constants.Validation;
-using Notino.Application.Features.Document.Requests.Commands;
+using Notino.Application.Features.Document.Requests.Commands.Common;
 
 namespace Notino.Application.DTOs.Document.Validators
 {
-    public class DocumentDtoValidator : AbstractValidator<CreateDocumentCommand>
+    public class DocumentDtoValidator : AbstractValidator<IBaseDocumentCommand>
     {
         public DocumentDtoValidator()
         {

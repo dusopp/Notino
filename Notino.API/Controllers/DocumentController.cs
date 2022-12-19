@@ -1,21 +1,13 @@
-﻿using Firebase.Database;
-using MediatR;
+﻿using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 using Notino.API.Controllers.Common;
 using Notino.Application.DTOs.Document;
 using Notino.Application.Features.Document.Requests.Commands;
 using Notino.Application.Features.Document.Requests.Queries;
-using Notino.Application.Responses;
-using System.IO;
-using System.Net.Http;
+using System;
 using System.Text;
-using System.Text.Json;
-using System.Threading;
 using System.Threading.Tasks;
-using System.Xml;
-using System.Xml.Serialization;
 
 namespace Notino.API.Controllers
 {
@@ -28,7 +20,7 @@ namespace Notino.API.Controllers
         public DocumentController(IMediator mediator)
             :base()
         {
-            _mediator = mediator;
+            _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
         }
         
         [HttpGet("{documentId}")]
@@ -54,12 +46,25 @@ namespace Notino.API.Controllers
 
 
         [HttpPost]
-        [ProducesResponseType(typeof(Response), StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
         public async Task<IActionResult> CreateDocument([FromBody] DocumentDto document)
         {
             var command = new CreateDocumentCommand { DocumentDto = document };
-            var repsonse = await _mediator.Send(command);
-            return CreatedAtAction(nameof(CreateDocument), new { documentId = document.Id});
+            await _mediator.Send(command);
+            return Created(Request.Path, null);
+        }
+
+        [HttpPut]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> UpdateDocument([FromBody] DocumentDto document)
+        {
+            var command = new UpdateDocumentCommand { DocumentDto = document };
+            await _mediator.Send(command);
+            return NoContent();
         }
     }
 }
