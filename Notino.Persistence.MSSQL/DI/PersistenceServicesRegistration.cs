@@ -16,16 +16,10 @@ namespace Notino.Persistence.MSSQL.DI
                 options => {
                     options.UseSqlServer(
                         configuration.GetConnectionString("NotinoDocumentManagementConnectionString"));
-                   
-                    
-                });
-
+            });
 
             services.AddScoped(typeof(IRepository<,>), typeof(BaseRepository<,>));
             services.AddScoped<IDocumentRepository, DocumentRepository>();
-            services.AddScoped<IUnitOfWork, UnitOfWork>();
-            //services.AddScoped<DocumentRepository>();
-
 
             return services;
         }

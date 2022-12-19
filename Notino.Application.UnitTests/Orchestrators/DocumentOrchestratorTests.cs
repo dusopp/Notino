@@ -16,19 +16,17 @@ namespace Notino.Application.UnitTests.Orchestrators
 {
     public class DocumentOrchestratorTests
     {
-        private readonly Mock<IUnitOfWork> _mockUow;
+       
         private readonly Mock<IDocumentRepository> _mockDocumentRepo;
         private readonly DocumentPersistenceOrchestrator _documentPersistenceOrchestrator;
 
         public DocumentOrchestratorTests()
         {
-            _mockUow = MockUnitOfWork.GetUnitOfWork();            
-            _mockDocumentRepo = MockDocumentRepository.GetDocumentRepository();
-            _mockUow.Setup(r => r.DocumentRepository).Returns(_mockDocumentRepo.Object);
+                      
+            _mockDocumentRepo = MockDocumentRepository.GetDocumentRepository();            
 
             _documentPersistenceOrchestrator = new DocumentPersistenceOrchestrator(
-                new List<IDocumentRepository>(){ _mockDocumentRepo.Object },
-                _mockUow.Object
+                new List<IDocumentRepository>(){ _mockDocumentRepo.Object }               
             );           
         }
 
@@ -45,7 +43,7 @@ namespace Notino.Application.UnitTests.Orchestrators
             await _documentPersistenceOrchestrator
                 .AddAsync(documentToAdd, new List<string>() { "tag" }, CancellationToken.None);
 
-            var document = await _mockUow.Object.DocumentRepository.GetByIdAsync("3", CancellationToken.None);
+            var document = await _mockDocumentRepo.Object.GetByIdAsync("3", CancellationToken.None);
             
             document.ShouldNotBeNull();
             document.ShouldBeOfType<Domain.Document>();
@@ -96,7 +94,7 @@ namespace Notino.Application.UnitTests.Orchestrators
             await _documentPersistenceOrchestrator
                 .UpdateAsync(documentToAdd, new List<string>() { "tag" }, CancellationToken.None);
 
-            var document = await _mockUow.Object.DocumentRepository.GetByIdAsync("2", CancellationToken.None);
+            var document = await _mockDocumentRepo.Object.GetByIdAsync("2", CancellationToken.None);
 
 
             document.ShouldNotBeNull();

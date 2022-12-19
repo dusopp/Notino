@@ -12,18 +12,14 @@ namespace Notino.Application.PersistenceOrchestration.Document
     public class DocumentPersistenceOrchestrator : IDocumentPersistenceOrchestrator
     {
         private readonly List<IDocumentRepository> _documentRepositories;
-        private readonly IUnitOfWork unitOfWork;
-
+        
         public DocumentPersistenceOrchestrator(
             //IOptions<PersistenceSettings> options,
-            IEnumerable<IDocumentRepository> docRepos, 
-            IUnitOfWork unitOfWork)
+            IEnumerable<IDocumentRepository> docRepos
+            )
         {
             if (docRepos == null)
                 throw new ArgumentNullException(nameof(docRepos));
-
-            this.unitOfWork = unitOfWork ??
-                throw new ArgumentNullException(nameof(unitOfWork));
 
             //var settings = options.Value;
             _documentRepositories = new List<IDocumentRepository>();
@@ -62,9 +58,7 @@ namespace Notino.Application.PersistenceOrchestration.Document
             {                
                 await RevertAsync(createTasks, document.Id, revertFuncs, ct);
                 throw;
-            }
-
-            await unitOfWork.SaveAsync();            
+            }                   
         }
 
         /*     
@@ -131,9 +125,7 @@ namespace Notino.Application.PersistenceOrchestration.Document
             {
                 await RevertAsync(updateTasks, document.Id, revertFuncs, ct);
                 throw;
-            }
-
-            await unitOfWork.SaveAsync();
+            }            
         }
     }
 }

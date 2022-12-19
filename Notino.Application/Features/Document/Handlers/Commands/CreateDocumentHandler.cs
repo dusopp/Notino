@@ -13,20 +13,16 @@ namespace Notino.Application.Features.Document.Handlers.Commands
     public class CreateDocumentHandler : ICommandHandler<CreateDocumentCommand, Response>
     {
         private readonly IDocumentPersistenceOrchestrator _docStorageOrchestrator;
-        private readonly IUnitOfWork unitOfWork;        
+             
 
         public CreateDocumentHandler(
-            IDocumentPersistenceOrchestrator docStorageOrchestrator 
-            //, IUnitOfWork unitOfWork //to delete for testing   
-            )
+            IDocumentPersistenceOrchestrator docStorageOrchestrator
+        )
         {
             _docStorageOrchestrator = docStorageOrchestrator ??
-                throw new ArgumentNullException(nameof(docStorageOrchestrator));
-
-            //this.unitOfWork = unitOfWork;            
-        }
+                throw new ArgumentNullException(nameof(docStorageOrchestrator));                  
+        }        
         
-        //refactor return type
         public async Task<Response> Handle(CreateDocumentCommand request, CancellationToken ct)
         {         
             var newDocument = new Domain.Document()
@@ -42,7 +38,7 @@ namespace Notino.Application.Features.Document.Handlers.Commands
             //await unitOfWork.DocumentRepository.UpdateDocumentWithTagsAsync(newDocument, request.DocumentDto.Tags);
             //await unitOfWork.SaveAsync();
 
-            return new Response();
+            return new Response() { Success = true };
         }
     }
 }

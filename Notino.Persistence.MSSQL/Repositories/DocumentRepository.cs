@@ -22,7 +22,7 @@ namespace Notino.Persistence.MSSQL.Repositories
 
         public async Task<Document> AddDocumentWithTagsAsync
             (Document document, 
-            IEnumerable<string> newDocumentTagNames,
+            IEnumerable<string> documentTags,
             CancellationToken ct,
             bool isUpdate = false)
         {
@@ -31,21 +31,11 @@ namespace Notino.Persistence.MSSQL.Repositories
             if (storedDocument != null && !isUpdate)
                 throw new AlreadyExistsException(nameof(Document), document.Id);
 
-            var storedTags = await GetStoredTags(newDocumentTagNames, ct);
+            await ManageDocumentTags(document, documentTags, ct);
 
-            var newTags = GetNotStoredTags(newDocumentTagNames, storedTags);
-
-            document.DocumentTag = storedTags
-                .Select(t => new DocumentTag { DocumentId = document.Id, TagId = t.Id})
-                .ToList();
-           
-            foreach (var newTag in 
-                newTags.Select(x => new DocumentTag { Document = document, Tag = x }))
-            {
-                document.DocumentTag.Add(newTag);
-            }
-            
             await _dbContext.Documents.AddAsync(document, ct);  
+
+            await _dbContext.SaveChangesAsync(ct);
             
             return document;
         }
@@ -75,7 +65,6 @@ namespace Notino.Persistence.MSSQL.Repositories
                 .Include(x => x.DocumentTag)
                 .SingleOrDefaultAsync(d => d.Id == id, ct);
 
-
             if (document != null)
             {
                 foreach (var documentTag in document.DocumentTag)
@@ -85,26 +74,51 @@ namespace Notino.Persistence.MSSQL.Repositories
 
                 document.IsDeleted = true;
 
+                await _dbContext.SaveChangesAsync(ct);
+
                 return document.Id;
             }
 
             return null;
         }
 
+        private async Task ManageDocumentTags(Document document, IEnumerable<string> documentTags, CancellationToken ct)
+        {
+            var storedTags = await GetStoredTags(documentTags, ct);
+            var newTags = GetNotStoredTags(documentTags, storedTags);
+
+            document.DocumentTag = storedTags
+                .Select(t => new DocumentTag { DocumentId = document.Id, TagId = t.Id })
+                .ToList();
+
+            foreach (var newTag in
+                newTags.Select(x => new DocumentTag { Document = document, Tag = x }))
+            {
+                document.DocumentTag.Add(newTag);
+            }
+        }
+
         public async Task<Document> UpdateDocumentWithTagsAsync(Document documentToUpdate, IEnumerable<string> updatedDocumentTagNames, CancellationToken ct)
         {
             var document = await _dbContext
                 .Documents
-                .Include(x => x.DocumentTag)                
+                .Include(x => x.DocumentTag)
                 .SingleOrDefaultAsync(d => d.Id == documentToUpdate.Id && !d.IsDeleted, ct);
-
+           
             if (document == null)
                 throw new NotFoundException(nameof(Document), documentToUpdate.Id);
 
-            document.IsDeleted = true;           
-            await AddDocumentWithTagsAsync(documentToUpdate, updatedDocumentTagNames, ct, true);
+            document.RawJson = documentToUpdate.RawJson;
 
-            return documentToUpdate;
+            foreach (var dt in document.DocumentTag)            
+                _dbContext.DocumentTags.Remove(dt);            
+
+            await ManageDocumentTags(document, updatedDocumentTagNames, ct);
+
+            _dbContext.Documents.Update(document);
+            await _dbContext.SaveChangesAsync();
+
+            return document;
         }
     }
 }

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace Notino.Persistence.MSSQL.Repositories.Common
 {
     public class BaseRepository<TEntity, TKey> : IRepository<TEntity, TKey> 
-        where TEntity : class, IBaseDomainEntity<TKey>, ISoftDeletableEntity
+        where TEntity : class, IBaseDomainEntity<TKey>
         where TKey : class
     {
         private readonly NotinoDbContext _dbContext;
@@ -33,18 +33,20 @@ namespace Notino.Persistence.MSSQL.Repositories.Common
 
         public async Task AddAsync(TEntity entity, CancellationToken ct)
         {
-            await _dbContext.AddAsync(entity, ct);           
+            await _dbContext.AddAsync(entity, ct);   
+            await _dbContext.SaveChangesAsync(ct);
         }
 
         public async Task DeleteAsync(TEntity entity, CancellationToken ct)
         {
             _dbContext.Set<TEntity>().Remove(entity);
+            await _dbContext.SaveChangesAsync(ct);
         }
 
         public async Task DeleteByIdAsync(TKey id, CancellationToken ct)
         {
-            throw new System.NotImplementedException();
+            TEntity entity = await GetByIdAsync(id, ct);
+            await DeleteAsync(entity, ct);
         }
-
     }
 }

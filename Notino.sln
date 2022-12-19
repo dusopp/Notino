@@ -21,7 +21,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Notino.Persistence.MSSQL", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Notino.Persistence.HDD", "Notino.Persistence.HDD\Notino.Persistence.HDD.csproj", "{AED30932-20E1-463C-9100-8A85186CF64C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Notino.Application.UnitTests", "Notino.Application.UnitTests\Notino.Application.UnitTests.csproj", "{8AAE5EB2-449A-4686-9AC8-3BE22C93B60A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Notino.Application.UnitTests", "Notino.Application.UnitTests\Notino.Application.UnitTests.csproj", "{8AAE5EB2-449A-4686-9AC8-3BE22C93B60A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CrossCutting", "CrossCutting", "{57935306-87EC-47A1-8DA7-E35F7D83D2E6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Notino.CrossCutting", "Notino.CrossCutting\Notino.CrossCutting.csproj", "{E67D1CE8-F9B7-4ACC-8D0C-E0768DBD8C7D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -53,6 +57,10 @@ Global
 		{8AAE5EB2-449A-4686-9AC8-3BE22C93B60A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8AAE5EB2-449A-4686-9AC8-3BE22C93B60A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8AAE5EB2-449A-4686-9AC8-3BE22C93B60A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E67D1CE8-F9B7-4ACC-8D0C-E0768DBD8C7D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E67D1CE8-F9B7-4ACC-8D0C-E0768DBD8C7D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E67D1CE8-F9B7-4ACC-8D0C-E0768DBD8C7D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E67D1CE8-F9B7-4ACC-8D0C-E0768DBD8C7D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -64,6 +72,7 @@ Global
 		{9F9C8C2C-4601-4B8D-AF92-157B14831141} = {FA2785B1-6411-47EF-AF07-75E7EC8AB3EE}
 		{AED30932-20E1-463C-9100-8A85186CF64C} = {FA2785B1-6411-47EF-AF07-75E7EC8AB3EE}
 		{8AAE5EB2-449A-4686-9AC8-3BE22C93B60A} = {069315B0-B937-40D6-8870-292AAC3BE3FB}
+		{E67D1CE8-F9B7-4ACC-8D0C-E0768DBD8C7D} = {57935306-87EC-47A1-8DA7-E35F7D83D2E6}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {DC7FCD62-79D3-4435-A00E-946964D29B87}

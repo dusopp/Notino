@@ -11,18 +11,16 @@ namespace Notino.Application.Features.Document.Handlers.Queries
 {
     public class GetDocumentHandler : IRequestHandler<GetDocumentRequest, RawResponseDto>
     {
-        private readonly IUnitOfWork _unitOfWork;        
+        private readonly IDocumentRepository _docRepo;
 
-        public GetDocumentHandler(IUnitOfWork unitOfWork)
-        {            
-            _unitOfWork = unitOfWork;            
+        public GetDocumentHandler(IDocumentRepository docRepo)
+        {          
+            _docRepo = docRepo;
         }
 
         public async Task<RawResponseDto> Handle(GetDocumentRequest request, CancellationToken ct)
-        {
-          
-            var document = await _unitOfWork
-                .DocumentRepository
+        {          
+            var document = await _docRepo                
                 .GetByIdAsync(request.Id, ct);
 
             if (document == null)
@@ -30,7 +28,7 @@ namespace Notino.Application.Features.Document.Handlers.Queries
 
             var rawReposnseDto = new RawResponseDto()
             { 
-                StoredValue = document.RawJson
+                RawResponse = document.RawJson
             };
 
             return rawReposnseDto;

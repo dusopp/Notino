@@ -12,11 +12,9 @@ namespace Notino.Persistence.HDD.DI
     public static class FilePersistenceServicesRegistration
     {
         public static IServiceCollection ConfigureSecondaryPersistenceServices(this IServiceCollection services, IConfiguration configuration)
-        {
-       
+        {    
             
-            services.AddScoped<IDocumentRepository, DocumentRepository>();
-            services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddScoped<IDocumentRepository, DocumentRepository>();            
 
             return services;
         }

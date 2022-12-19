@@ -5,15 +5,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Factories\**" />
     <Compile Remove="Utilities\**" />
-    <EmbeddedResource Remove="Factories\**" />
     <EmbeddedResource Remove="Utilities\**" />
-    <None Remove="Factories\**" />
     <None Remove="Utilities\**" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Notino.CrossCutting\Notino.CrossCutting.csproj" />
     <ProjectReference Include="..\Notino.Domain\Notino.Domain.csproj" />
   </ItemGroup>
 
@@ -23,12 +21,11 @@
     <PackageReference Include="MediatR" Version="11.1.0" />
     <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="11.0.0" />
     <PackageReference Include="MessagePack" Version="2.4.59" />
-    <PackageReference Include="Microsoft.AspNet.Mvc" Version="5.2.9" />
-    <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="3.1.31" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="3.1.31" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="3.1.31" />
-    <PackageReference Include="Microsoft.Extensions.Options" Version="3.1.31" />
+    <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="7.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="7.0.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="7.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Options" Version="7.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
   </ItemGroup>
 

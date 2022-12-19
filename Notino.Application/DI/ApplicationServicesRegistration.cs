@@ -3,7 +3,9 @@ using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using Notino.Application.Behaviours;
 using Notino.Application.Contracts.PersistenceOrchestration;
+using Notino.Application.Contracts.ResponseConversion.Factory;
 using Notino.Application.PersistenceOrchestration.Document;
+using Notino.Application.ResponseConversion.Factory;
 using System.Reflection;
 
 namespace Notino.Application.DI
@@ -18,11 +20,12 @@ namespace Notino.Application.DI
             
             //for pipeline behaviour, ORDER MATTERS!!!
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
-            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ResponseAdaptationBehaviour<,>));
+            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ResponseConversionBehaviour<,>));
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(CachingBehavior<,>));
             
             services.AddValidatorsFromAssembly(applicationAssembly);           
             services.AddScoped<IDocumentPersistenceOrchestrator, DocumentPersistenceOrchestrator>();
+            services.AddScoped<IResponseConverterFactory, ResponseConverterFactory>();
 
             return services;
         }

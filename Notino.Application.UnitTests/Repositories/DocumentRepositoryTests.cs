@@ -90,7 +90,36 @@ namespace Notino.Application.UnitTests.Repositories
         }
 
         [Fact]
-        public async Task AddDocumentWithTagsAsync_NewDocument_ShouldReturnDocument()
+        public async Task AddDocumentWithTagsAsync_NewDocumentWithTwoNewTags_ShouldReturnDocument()
+        {
+            var documentToAdd = new Domain.Document()
+            {
+                Id = "3",
+                RawJson = @"{""Tags"":[""a"",""b""],""Data"":{""some"":""data"",""optional"":""fields""},""Id"":""3""}",
+            };
+            var tags = new List<string>() { "a", "b" };
+
+            using (var context = GetContextWithData(Guid.NewGuid().ToString()))
+            {
+                IDocumentRepository docRepo = new DocumentRepository(context);
+                var document = await docRepo.AddDocumentWithTagsAsync(                      
+                      documentToAdd, tags, CancellationToken.None
+                    );
+                await context.SaveChangesAsync();
+
+                var newlyAddedDoc = await docRepo.GetByIdAsync(documentToAdd.Id, CancellationToken.None);
+                var tagsCount = await context.Tags.CountAsync();
+
+                newlyAddedDoc.ShouldNotBeNull();
+                newlyAddedDoc.Id.ShouldBe(documentToAdd.Id);
+                newlyAddedDoc.RawJson.ShouldBe(documentToAdd.RawJson);
+
+                tagsCount.ShouldBe(2);
+            }
+        }
+
+        [Fact]
+        public async Task AddDocumentWithTagsAsync_NewDocumentNoNewTags_ShouldReturnDocument()
         {
             var documentToAdd = new Domain.Document()
             {
@@ -102,7 +131,7 @@ namespace Notino.Application.UnitTests.Repositories
             using (var context = GetContextWithData(Guid.NewGuid().ToString()))
             {
                 IDocumentRepository docRepo = new DocumentRepository(context);
-                var document = await docRepo.AddDocumentWithTagsAsync(                      
+                var document = await docRepo.AddDocumentWithTagsAsync(
                       documentToAdd, tags, CancellationToken.None
                     );
                 await context.SaveChangesAsync();
@@ -161,6 +190,62 @@ namespace Notino.Application.UnitTests.Repositories
 
                 getDoc.ShouldBeNull();
                 docTagsCount.ShouldBe(0);
+            }
+        }
+
+        [Fact]
+        public async Task UpdateDocumentWithTagsAsync_ExistingDocumentWithTwoNewTags_ShouldReturnUpdatedDocument()
+        {
+            var documentToUpdate = new Domain.Document()
+            {
+                Id = "1",
+                RawJson = @"{""Tags"":[""p"",""t""],""Data"":{""some"":""data"",""optional"":""fields""},""Id"":""1""}",
+            };
+            var tags = new List<string>() { "p", "t" };
+
+            using (var context = GetContextWithData(Guid.NewGuid().ToString()))
+            {
+                IDocumentRepository docRepo = new DocumentRepository(context);
+                var document = await docRepo.UpdateDocumentWithTagsAsync(
+                      documentToUpdate, tags, CancellationToken.None
+                    );
+                
+                var updatedDoc = await docRepo.GetByIdAsync(documentToUpdate.Id, CancellationToken.None);
+                var tagsCount = await context.Tags.CountAsync();
+
+                updatedDoc.ShouldNotBeNull();
+                updatedDoc.Id.ShouldBe(documentToUpdate.Id);
+                updatedDoc.RawJson.ShouldBe(documentToUpdate.RawJson);
+
+                tagsCount.ShouldBe(4);
+            }
+        }
+
+        [Fact]
+        public async Task UpdateDocumentWithTagsAsync_ExistingDocumentNoNewTags_ShouldReturnUpdatedDocument()
+        {
+            var documentToUpdate = new Domain.Document()
+            {
+                Id = "1",
+                RawJson = @"{""Tags"":[""a"",""b""],""Data"":{""some"":""test"",""optional"":""test2""},""Id"":""1""}",
+            };
+            var tags = new List<string>() { "a", "b" };
+
+            using (var context = GetContextWithData(Guid.NewGuid().ToString()))
+            {
+                IDocumentRepository docRepo = new DocumentRepository(context);
+                var document = await docRepo.UpdateDocumentWithTagsAsync(
+                      documentToUpdate, tags, CancellationToken.None
+                    );
+
+                var updatedDoc = await docRepo.GetByIdAsync(documentToUpdate.Id, CancellationToken.None);
+                var tagsCount = await context.Tags.CountAsync();
+
+                updatedDoc.ShouldNotBeNull();
+                updatedDoc.Id.ShouldBe(documentToUpdate.Id);
+                updatedDoc.RawJson.ShouldBe(documentToUpdate.RawJson);
+
+                tagsCount.ShouldBe(2);
             }
         }
 

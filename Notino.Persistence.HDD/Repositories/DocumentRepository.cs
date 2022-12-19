@@ -1,5 +1,4 @@
-﻿using Notino.Application.AsyncronousConstructs;
-using Notino.Application.Contracts.Persistence;
+﻿using Notino.Application.Contracts.Persistence;
 using Notino.Application.Exceptions;
 using Notino.Domain;
 using Notino.Persistence.HDD.Repositories.Common;
@@ -12,11 +11,9 @@ using System.Threading.Tasks;
 namespace Notino.Persistence.HDD.Repositories
 {
     public class DocumentRepository : BaseRepository<Document, string>, IDocumentRepository
-    {
-        
-
+    {       
         public DocumentRepository()
-        :base(nameof(Document))
+            :base(nameof(Document))
         {
         }
 

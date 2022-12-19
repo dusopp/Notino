@@ -10,7 +10,7 @@ using Notino.Persistence.MSSQL;
 namespace Notino.Persistence.MSSQL.Migrations
 {
     [DbContext(typeof(NotinoDbContext))]
-    [Migration("20221219081832_Initial")]
+    [Migration("20221219142850_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
