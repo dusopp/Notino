@@ -12,14 +12,14 @@ namespace Notino.Persistence.MSSQL.Repositories
 {
     public class DocumentRepository: BaseRepository<Document, string>, IDocumentRepository
     {
-        private readonly DocumentDbContext _dbContext;
+        private readonly NotinoDbContext _dbContext;
 
-        public DocumentRepository(DocumentDbContext dbContext) : base(dbContext)
+        public DocumentRepository(NotinoDbContext dbContext) : base(dbContext)
         {
             _dbContext = dbContext;
         }       
 
-        public async Task AddDocumentWithTagsAsync
+        public async Task<Document> AddDocumentWithTagsAsync
             (Document document, 
             IEnumerable<string> newDocumentTagNames,
             bool isUpdate = false)
@@ -43,7 +43,9 @@ namespace Notino.Persistence.MSSQL.Repositories
                 document.DocumentTag.Add(newTag);
             }
             
-            await _dbContext.Documents.AddAsync(document);          
+            await _dbContext.Documents.AddAsync(document);  
+            
+            return document;
         }
 
         private async Task<List<Tag>> GetStoredTags(IEnumerable<string> tagNames)
@@ -64,27 +66,27 @@ namespace Notino.Persistence.MSSQL.Repositories
                 .ToList();
         }
 
-        public async Task DeleteDocumentWithTagsAsync(string id)
+        public async Task<string> DeleteDocumentWithTagsAsync(string id)
         {
             var document = await _dbContext
                 .Documents
                 .Include(x => x.DocumentTag)
                 .SingleOrDefaultAsync(d => d.Id == id);
 
-            if (document != null)
+            if(document == null)
+                throw new NotFoundException(nameof(Document), id);
+          
+            foreach (var documentTag in document.DocumentTag)
             {
-                foreach (var documentTag in document.DocumentTag)
-                {
-                    _dbContext.DocumentTags.Remove(documentTag);
-                }
-
-                await DeleteAsync(document);
+                _dbContext.DocumentTags.Remove(documentTag);
             }
-            
-            await _dbContext.SaveChangesAsync();
+
+            document.IsDeleted = true;              
+           
+            return document.Id;
         }
 
-        public async Task UpdateDocumentWithTagsAsync(Document documentToUpdate, IEnumerable<string> updatedDocumentTagNames)
+        public async Task<Document> UpdateDocumentWithTagsAsync(Document documentToUpdate, IEnumerable<string> updatedDocumentTagNames)
         {
             var document = await _dbContext
                 .Documents
@@ -92,10 +94,12 @@ namespace Notino.Persistence.MSSQL.Repositories
                 .SingleOrDefaultAsync(d => d.Id == documentToUpdate.Id && !d.IsDeleted);
 
             if (document == null)
-                throw new NotFoundException(nameof(Document), document.Id);
+                throw new NotFoundException(nameof(Document), documentToUpdate.Id);
 
             document.IsDeleted = true;           
             await AddDocumentWithTagsAsync(documentToUpdate, updatedDocumentTagNames, true);
+
+            return documentToUpdate;
 
             /*
             document.RawJson = documentToUpdate.RawJson;

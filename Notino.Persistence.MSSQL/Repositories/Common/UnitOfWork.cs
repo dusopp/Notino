@@ -6,13 +6,13 @@ namespace Notino.Persistence.MSSQL.Repositories.Common
 {
     public class UnitOfWork : IUnitOfWork, IDisposable
     {
-        private readonly DocumentDbContext _context;
+        private readonly NotinoDbContext _context;
         private IDocumentRepository _documentRepo;
 
         public IDocumentRepository DocumentRepository => 
             _documentRepo;
 
-        public UnitOfWork(DocumentDbContext dbContext, IDocumentRepository documentRepository)
+        public UnitOfWork(NotinoDbContext dbContext, IDocumentRepository documentRepository)
         {
             _context = dbContext;
             _documentRepo = documentRepository;

@@ -66,9 +66,7 @@ namespace Notino.API
             //services.AddMessagePack(options => { 
             //    options.MediaTypes.Add("application/x-msgpack");
                
-            //});
-
-            
+            //});            
         }
 
         private void AddSwaggerDoc(IServiceCollection services)
@@ -94,7 +92,7 @@ namespace Notino.API
             app.UseMiddleware<ExceptionMiddleware>();
 
             app.UseSwagger();
-            app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "HR.LeaveManagement.Api v1"));
+            app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Notino.Api v1"));
 
 
             app.UseHttpsRedirection();

@@ -9,7 +9,7 @@ using Notino.Persistence.MSSQL;
 
 namespace Notino.Persistence.MSSQL.Migrations
 {
-    [DbContext(typeof(DocumentDbContext))]
+    [DbContext(typeof(NotinoDbContext))]
     [Migration("20221218101034_Initial")]
     partial class Initial
     {

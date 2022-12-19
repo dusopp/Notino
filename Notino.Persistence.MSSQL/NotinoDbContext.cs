@@ -4,9 +4,9 @@ using Notino.Persistence.MSSQL.Repositories.Common;
 
 namespace Notino.Persistence.MSSQL
 {
-    public class DocumentDbContext: BaseDbContext
+    public class NotinoDbContext: BaseDbContext
     {
-        public DocumentDbContext(DbContextOptions<DocumentDbContext> dbContextOptions) 
+        public NotinoDbContext(DbContextOptions<NotinoDbContext> dbContextOptions) 
             : base(dbContextOptions)
         {
         }
@@ -14,7 +14,7 @@ namespace Notino.Persistence.MSSQL
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder
-                .ApplyConfigurationsFromAssembly(typeof(DocumentDbContext).Assembly);
+                .ApplyConfigurationsFromAssembly(typeof(NotinoDbContext).Assembly);
            
         }
 

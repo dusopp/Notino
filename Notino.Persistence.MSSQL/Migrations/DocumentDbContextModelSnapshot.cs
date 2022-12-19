@@ -8,7 +8,7 @@ using Notino.Persistence.MSSQL;
 
 namespace Notino.Persistence.MSSQL.Migrations
 {
-    [DbContext(typeof(DocumentDbContext))]
+    [DbContext(typeof(NotinoDbContext))]
     partial class DocumentDbContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)

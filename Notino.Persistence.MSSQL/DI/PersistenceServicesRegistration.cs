@@ -12,7 +12,7 @@ namespace Notino.Persistence.MSSQL.DI
     {
         public static IServiceCollection ConfigurePrimaryPersistenceServices(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddDbContext<DocumentDbContext>(
+            services.AddDbContext<NotinoDbContext>(
                 options => {
                     options.UseSqlServer(
                         configuration.GetConnectionString("NotinoDocumentManagementConnectionString"));

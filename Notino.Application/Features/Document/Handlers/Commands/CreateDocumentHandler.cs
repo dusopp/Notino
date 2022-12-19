@@ -1,10 +1,10 @@
-﻿using MediatR;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using Notino.Application.Contracts.Messaging;
 using Notino.Application.Contracts.Persistence;
 using Notino.Application.Contracts.PersistenceOrchestration;
 using Notino.Application.Features.Document.Requests.Commands;
 using Notino.Application.Responses;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -12,17 +12,18 @@ namespace Notino.Application.Features.Document.Handlers.Commands
 {
     public class CreateDocumentHandler : ICommandHandler<CreateDocumentCommand, Response>
     {
-        private readonly IDocumentPersistenceOrchestrator storageOrchestrator;
-        private readonly IUnitOfWork unitOfWork;
-        private readonly IDocumentRepository _documentRepository;
+        private readonly IDocumentPersistenceOrchestrator _docStorageOrchestrator;
+        private readonly IUnitOfWork unitOfWork;        
 
         public CreateDocumentHandler(
-            IDocumentPersistenceOrchestrator storageOrchestrator,
-            IUnitOfWork unitOfWork)
+            IDocumentPersistenceOrchestrator docStorageOrchestrator 
+            //, IUnitOfWork unitOfWork //to delete for testing   
+            )
         {
-            this.storageOrchestrator = storageOrchestrator;
-            this.unitOfWork = unitOfWork;
-            //_documentRepository = documentRepository;
+            _docStorageOrchestrator = docStorageOrchestrator ??
+                throw new ArgumentNullException(nameof(docStorageOrchestrator));
+
+            //this.unitOfWork = unitOfWork;            
         }
         
         //refactor return type
@@ -34,7 +35,7 @@ namespace Notino.Application.Features.Document.Handlers.Commands
                 RawJson = JsonConvert.SerializeObject(request.DocumentDto)
             };
 
-            await storageOrchestrator.AddAsync(newDocument, request.DocumentDto.Tags);
+            await _docStorageOrchestrator.AddAsync(newDocument, request.DocumentDto.Tags);
 
             //await unitOfWork.DocumentRepository.DeleteDocumentWithTagsAsync(newDocument.Id);
 

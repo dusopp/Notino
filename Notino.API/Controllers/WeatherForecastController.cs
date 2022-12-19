@@ -38,7 +38,7 @@ namespace Notino.API.Controllers
             //})
             //.ToArray();
 
-            return Ok(timeNow);
+            return Ok(DateTime.UtcNow);
         }
     }
 }

@@ -13,24 +13,33 @@ namespace Notino.Application.PersistenceOrchestration.Document
         private readonly List<IDocumentRepository> _documentRepositories;
         private readonly IUnitOfWork unitOfWork;
 
-        public DocumentPersistenceOrchestrator(IOptions<PersistenceSettings> options,
-            IEnumerable<IDocumentRepository> repos, IUnitOfWork unitOfWork)
+        public DocumentPersistenceOrchestrator(
+            //IOptions<PersistenceSettings> options,
+            IEnumerable<IDocumentRepository> docRepos, 
+            IUnitOfWork unitOfWork)
         {
-            var settings = options.Value;
+            if (docRepos == null)
+                throw new ArgumentNullException(nameof(docRepos));
+
+            this.unitOfWork = unitOfWork ??
+                throw new ArgumentNullException(nameof(unitOfWork));
+
+            //var settings = options.Value;
             _documentRepositories = new List<IDocumentRepository>();
-
-
-            foreach (var repo in repos)
-            {
+ 
+            foreach (var repo in docRepos)            
                 _documentRepositories.Add(repo);
-            }
-
-            this.unitOfWork = unitOfWork;
         }
-
 
         public async Task AddAsync(Domain.Document document, IEnumerable<string> tagNames)
         {
+            if (document == null)
+                throw new ArgumentNullException(nameof(document));
+
+            if (tagNames == null)
+                throw new ArgumentNullException(nameof(tagNames));
+
+
             var createTasks = new List<Task>();
             var revertFuncs = new Dictionary<int, Func<string, Task>>();
 
@@ -49,14 +58,12 @@ namespace Notino.Application.PersistenceOrchestration.Document
                 await result;
             }
             catch
-            {
-                
+            {                
                 await RevertAsync(createTasks, document.Id, revertFuncs);
-
                 throw;
             }
 
-            await unitOfWork.SaveAsync();
+            await unitOfWork.SaveAsync();            
         }
 
         /*     
@@ -97,6 +104,12 @@ namespace Notino.Application.PersistenceOrchestration.Document
 
         public async Task UpdateAsync(Domain.Document document, IEnumerable<string> tagNames)
         {
+            if (document == null)
+                throw new ArgumentNullException(nameof(document));
+
+            if (tagNames == null)
+                throw new ArgumentNullException(nameof(tagNames));
+
             var updateTasks = new List<Task>();
             var revertFuncs = new Dictionary<int, Func<string, Task>>();
 
@@ -107,7 +120,6 @@ namespace Notino.Application.PersistenceOrchestration.Document
                 revertFuncs.Add(i, _documentRepositories[i].DeleteDocumentWithTagsAsync);
             }
 
-
             var result = Task.WhenAll(updateTasks);
 
             try
@@ -116,9 +128,7 @@ namespace Notino.Application.PersistenceOrchestration.Document
             }
             catch
             {
-
                 await RevertAsync(updateTasks, document.Id, revertFuncs);
-
                 throw;
             }
 

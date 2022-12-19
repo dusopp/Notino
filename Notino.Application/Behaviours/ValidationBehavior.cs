@@ -13,7 +13,8 @@ namespace Notino.Application.Behaviours
     {
         private readonly IEnumerable<IValidator<TRequest>> _validators;
 
-        public ValidationBehavior(IEnumerable<IValidator<TRequest>> validators) => _validators = validators;
+        public ValidationBehavior(IEnumerable<IValidator<TRequest>> validators) 
+            => _validators = validators;
 
         public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
         {
@@ -31,7 +32,7 @@ namespace Notino.Application.Behaviours
 
             if (errorsList.Any())
             {
-                throw new Exceptions.ValidationException(errorsList);
+                throw new ValidationException(errorsList);
             }
 
             return await next();

@@ -4,15 +4,15 @@ using System.Threading.Tasks;
 
 namespace Notino.Application.Contracts.Persistence
 {
-    public interface IDocumentRepository : IRepository<Document,string>
+    public interface IDocumentRepository : IRepository<Document, string>
     {        
-        Task AddDocumentWithTagsAsync(
+        Task<Document> AddDocumentWithTagsAsync(
             Document document, 
             IEnumerable<string> tagNames, 
             bool isUpdate = false);
 
-        Task UpdateDocumentWithTagsAsync(Document documentToUpdate, IEnumerable<string> updatedDocumentTagNames);
+        Task<Document> UpdateDocumentWithTagsAsync(Document documentToUpdate, IEnumerable<string> updatedDocumentTagNames);
 
-        Task DeleteDocumentWithTagsAsync(string id);
+        Task<string> DeleteDocumentWithTagsAsync(string id);
     }
 }

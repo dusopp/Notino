@@ -10,9 +10,9 @@ namespace Notino.Persistence.MSSQL.Repositories.Common
         where TEntity : class, IBaseDomainEntity<TKey>, ISoftDeletableEntity
         where TKey : class
     {
-        private readonly DocumentDbContext _dbContext;
+        private readonly NotinoDbContext _dbContext;
 
-        protected BaseRepository(DocumentDbContext dbContext)
+        protected BaseRepository(NotinoDbContext dbContext)
         {
             _dbContext = dbContext;
         }
