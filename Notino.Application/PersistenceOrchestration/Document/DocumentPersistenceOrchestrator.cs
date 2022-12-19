@@ -4,6 +4,7 @@ using Notino.Application.Contracts.PersistenceOrchestration;
 using Notino.Application.Settings;
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Notino.Application.PersistenceOrchestration.Document
@@ -31,7 +32,7 @@ namespace Notino.Application.PersistenceOrchestration.Document
                 _documentRepositories.Add(repo);
         }
 
-        public async Task AddAsync(Domain.Document document, IEnumerable<string> tagNames)
+        public async Task AddAsync(Domain.Document document, IEnumerable<string> tagNames, CancellationToken ct)
         {
             if (document == null)
                 throw new ArgumentNullException(nameof(document));
@@ -41,12 +42,12 @@ namespace Notino.Application.PersistenceOrchestration.Document
 
 
             var createTasks = new List<Task>();
-            var revertFuncs = new Dictionary<int, Func<string, Task>>();
+            var revertFuncs = new Dictionary<int, Func<string, CancellationToken, Task>>();
 
             for (int i = 0; i < _documentRepositories.Count; i++)
             {
                 createTasks.Add(_documentRepositories[i]
-                    .AddDocumentWithTagsAsync(document, tagNames));
+                    .AddDocumentWithTagsAsync(document, tagNames, ct));
                 revertFuncs.Add(i, _documentRepositories[i].DeleteDocumentWithTagsAsync);
             }
 
@@ -59,7 +60,7 @@ namespace Notino.Application.PersistenceOrchestration.Document
             }
             catch
             {                
-                await RevertAsync(createTasks, document.Id, revertFuncs);
+                await RevertAsync(createTasks, document.Id, revertFuncs, ct);
                 throw;
             }
 
@@ -70,9 +71,9 @@ namespace Notino.Application.PersistenceOrchestration.Document
             For future consideration, moving this method to common BaseOrchestratorClass.   
             Now premature optimisation
         */
-        public async Task RevertAsync(List<Task> failedTasks, string id, Dictionary<int, Func<string, Task>> revertFuncs, int revertsCnt = 0)
+        public async Task RevertAsync(List<Task> failedTasks, string id, Dictionary<int, Func<string, CancellationToken, Task>> revertFuncs, CancellationToken ct, int revertsCnt = 0)
         {
-            var revertMethodsDict = new Dictionary<int, Func<string, Task>>();
+            var revertMethodsDict = new Dictionary<int, Func<string, CancellationToken, Task>>();
             var revertTasks = new List<Task>();
 
             for (int i = 0; i < failedTasks.Count; i++)
@@ -80,7 +81,7 @@ namespace Notino.Application.PersistenceOrchestration.Document
                 if (!failedTasks[i].IsFaulted)
                 {
                     revertMethodsDict.Add(i, revertFuncs[i]);
-                    revertTasks.Add(revertFuncs[i](id));
+                    revertTasks.Add(revertFuncs[i](id, ct));
                 }
                 else
                 {
@@ -98,11 +99,11 @@ namespace Notino.Application.PersistenceOrchestration.Document
                 if (revertsCnt > 3)
                     throw;
 
-                await RevertAsync(revertTasks, id, revertFuncs, ++revertsCnt);
+                await RevertAsync(revertTasks, id, revertFuncs, ct, ++revertsCnt);
             }
         }
 
-        public async Task UpdateAsync(Domain.Document document, IEnumerable<string> tagNames)
+        public async Task UpdateAsync(Domain.Document document, IEnumerable<string> tagNames, CancellationToken ct)
         {
             if (document == null)
                 throw new ArgumentNullException(nameof(document));
@@ -111,12 +112,12 @@ namespace Notino.Application.PersistenceOrchestration.Document
                 throw new ArgumentNullException(nameof(tagNames));
 
             var updateTasks = new List<Task>();
-            var revertFuncs = new Dictionary<int, Func<string, Task>>();
+            var revertFuncs = new Dictionary<int, Func<string, CancellationToken, Task>>();
 
             for (int i = 0; i < _documentRepositories.Count; i++)
             {
                 updateTasks.Add(_documentRepositories[i]
-                    .UpdateDocumentWithTagsAsync(document, tagNames));
+                    .UpdateDocumentWithTagsAsync(document, tagNames, ct));
                 revertFuncs.Add(i, _documentRepositories[i].DeleteDocumentWithTagsAsync);
             }
 
@@ -128,7 +129,7 @@ namespace Notino.Application.PersistenceOrchestration.Document
             }
             catch
             {
-                await RevertAsync(updateTasks, document.Id, revertFuncs);
+                await RevertAsync(updateTasks, document.Id, revertFuncs, ct);
                 throw;
             }
 

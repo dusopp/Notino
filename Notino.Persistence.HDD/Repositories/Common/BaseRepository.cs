@@ -3,6 +3,7 @@ using Notino.Application.Contracts.Persistence;
 using Notino.Domain.Common;
 using System;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Notino.Persistence.HDD.Repositories.Common
@@ -22,35 +23,36 @@ namespace Notino.Persistence.HDD.Repositories.Common
 
         public BaseRepository(string entityName)
         {
-            this.entityName = entityName;
+            this.entityName = entityName ?? throw new ArgumentNullException(nameof(entityName));
         }
          
-        public async Task AddAsync(T entity)
+        public async Task AddAsync(T entity, CancellationToken ct)
         {
             throw new NotImplementedException();
         }
 
-        public async Task DeleteAsync(T entity)
+        public async Task DeleteAsync(T entity, CancellationToken ct)
         {
-            await DeleteByIdAsync(entity.Id);
+            await DeleteByIdAsync(entity.Id, ct);
         }
 
-        public async Task DeleteByIdAsync(TKey id)
+        public async Task DeleteByIdAsync(TKey id, CancellationToken ct)
         {
-            await Task.Run(() => File.Delete(GetFileName(id)));
+            //this implement soft delete? just adding deleted to filename
+            await Task.Run(() => File.Delete(GetFileName(id)), ct);
         }
 
-        public Task<bool> ExistsAsync(TKey id)
+        public Task<bool> ExistsAsync(TKey id, CancellationToken ct)
         {
             return Task.FromResult(File.Exists(GetFileName(id)));
         }
 
-        public async Task<T> GetByIdAsync(TKey id)
+        public async Task<T> GetByIdAsync(TKey id, CancellationToken ct)
         {
-            var fileContent = await File.ReadAllTextAsync("testtt.txt"); //GetFileName(id)
+            var fileContent = await File.ReadAllTextAsync(GetFileName(id), ct); //
 
             var result = JsonConvert.DeserializeObject<T>(fileContent);
-            //result.RawJson = fileContent;
+            
 
             return result;
         }

@@ -8,6 +8,7 @@ using Shouldly;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -40,11 +41,11 @@ namespace Notino.Application.UnitTests.Orchestrators
                 RawJson = @"{""Tags"":[""a"",""b""],""Data"":{""some"":""data"",""optional"":""fields""},""Id"":""2""}",
                 DocumentTag = new LinkedList<Domain.DocumentTag>()
             };
-            
+           
             await _documentPersistenceOrchestrator
-                .AddAsync(documentToAdd, new List<string>() { "tag" });
+                .AddAsync(documentToAdd, new List<string>() { "tag" }, CancellationToken.None);
 
-            var document = await _mockUow.Object.DocumentRepository.GetByIdAsync("3");
+            var document = await _mockUow.Object.DocumentRepository.GetByIdAsync("3", CancellationToken.None);
             
             document.ShouldNotBeNull();
             document.ShouldBeOfType<Domain.Document>();
@@ -59,7 +60,8 @@ namespace Notino.Application.UnitTests.Orchestrators
 
             var result = await Should.ThrowAsync<ArgumentNullException>(async () => await _documentPersistenceOrchestrator.AddAsync(
                  documentToAdd,
-                 new List<string>() { }
+                 new List<string>() { },
+                 CancellationToken.None
              ));
 
             result.Message.ShouldBe("Value cannot be null. (Parameter 'document')");          
@@ -73,7 +75,8 @@ namespace Notino.Application.UnitTests.Orchestrators
 
             var result = await Should.ThrowAsync<ArgumentNullException>(async () => await _documentPersistenceOrchestrator.AddAsync(
                  documentToAdd,
-                 null
+                 null,
+                 CancellationToken.None
              ));
 
             result.Message.ShouldBe("Value cannot be null. (Parameter 'tagNames')");
@@ -91,9 +94,9 @@ namespace Notino.Application.UnitTests.Orchestrators
             };
 
             await _documentPersistenceOrchestrator
-                .UpdateAsync(documentToAdd, new List<string>() { "tag" });
+                .UpdateAsync(documentToAdd, new List<string>() { "tag" }, CancellationToken.None);
 
-            var document = await _mockUow.Object.DocumentRepository.GetByIdAsync("2");
+            var document = await _mockUow.Object.DocumentRepository.GetByIdAsync("2", CancellationToken.None);
 
 
             document.ShouldNotBeNull();
@@ -110,7 +113,8 @@ namespace Notino.Application.UnitTests.Orchestrators
             var result = await Should.ThrowAsync<ArgumentNullException>(async () 
                 => await _documentPersistenceOrchestrator.UpdateAsync(
                  documentToAdd,
-                 new List<string>() { }
+                 new List<string>() { },
+                 CancellationToken.None
              ));
 
             result.Message.ShouldBe("Value cannot be null. (Parameter 'document')");

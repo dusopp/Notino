@@ -23,9 +23,9 @@ namespace Notino.Application.Behaviours
         private readonly CacheSettings _settings;
         public CachingBehavior(IDistributedCache cache, ILogger<TResponse> logger, IOptions<CacheSettings> settings)
         {
-            _cache = cache;
-            _logger = logger;
-            _settings = settings.Value;
+            _cache = cache ?? throw new ArgumentNullException(nameof(cache));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger)); 
+            _settings = settings.Value ?? throw new ArgumentNullException(nameof(settings));
         }
 
         public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)

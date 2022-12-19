@@ -27,7 +27,7 @@ namespace Notino.Application.Features.Document.Handlers.Commands
         }
         
         //refactor return type
-        public async Task<Response> Handle(CreateDocumentCommand request, CancellationToken cancellationToken)
+        public async Task<Response> Handle(CreateDocumentCommand request, CancellationToken ct)
         {         
             var newDocument = new Domain.Document()
             {
@@ -35,7 +35,7 @@ namespace Notino.Application.Features.Document.Handlers.Commands
                 RawJson = JsonConvert.SerializeObject(request.DocumentDto)
             };
 
-            await _docStorageOrchestrator.AddAsync(newDocument, request.DocumentDto.Tags);
+            await _docStorageOrchestrator.AddAsync(newDocument, request.DocumentDto.Tags, ct);
 
             //await unitOfWork.DocumentRepository.DeleteDocumentWithTagsAsync(newDocument.Id);
 

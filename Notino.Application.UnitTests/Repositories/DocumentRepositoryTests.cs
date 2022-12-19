@@ -7,6 +7,7 @@ using Shouldly;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -17,8 +18,7 @@ namespace Notino.Application.UnitTests.Repositories
         private DbContextOptions<NotinoDbContext> _contextOptions;
 
         public DocumentRepositoryTests()
-        {
-            
+        {            
         }
 
         private NotinoDbContext GetContextWithData(string dbName) 
@@ -69,7 +69,7 @@ namespace Notino.Application.UnitTests.Repositories
             using (var context = GetContextWithData(Guid.NewGuid().ToString()))
             {
                 IDocumentRepository docRepo = new DocumentRepository(context);
-                var document = await docRepo.GetByIdAsync(documentId);
+                var document = await docRepo.GetByIdAsync(documentId, CancellationToken.None);
 
                 document.ShouldNotBeNull();
                 document.Id.ShouldBe("1");
@@ -83,7 +83,7 @@ namespace Notino.Application.UnitTests.Repositories
             using (var context = GetContextWithData(Guid.NewGuid().ToString()))
             {
                 IDocumentRepository docRepo = new DocumentRepository(context);
-                var document = await docRepo.GetByIdAsync(documentId);
+                var document = await docRepo.GetByIdAsync(documentId, CancellationToken.None);
 
                 document.ShouldBeNull();                
             }
@@ -103,11 +103,11 @@ namespace Notino.Application.UnitTests.Repositories
             {
                 IDocumentRepository docRepo = new DocumentRepository(context);
                 var document = await docRepo.AddDocumentWithTagsAsync(                      
-                      documentToAdd, tags
+                      documentToAdd, tags, CancellationToken.None
                     );
                 await context.SaveChangesAsync();
 
-                var newlyAddedDoc = await docRepo.GetByIdAsync(documentToAdd.Id);
+                var newlyAddedDoc = await docRepo.GetByIdAsync(documentToAdd.Id, CancellationToken.None);
                 var tagsCount = await context.Tags.CountAsync();
 
                 newlyAddedDoc.ShouldNotBeNull();
@@ -132,7 +132,8 @@ namespace Notino.Application.UnitTests.Repositories
             
                 var result = await Should.ThrowAsync<AlreadyExistsException>(async () => await docRepo.AddDocumentWithTagsAsync(
                     documentToAdd,
-                    new List<string>() { }
+                    new List<string>() { },
+                    CancellationToken.None
                 ));
 
                 result.Message.ShouldBe($"Document with Id:'{documentToAdd.Id}' already exists");                
@@ -151,11 +152,11 @@ namespace Notino.Application.UnitTests.Repositories
             {
                 IDocumentRepository docRepo = new DocumentRepository(context);
                 var document = await docRepo.DeleteDocumentWithTagsAsync(
-                      documentToRemove.Id
+                      documentToRemove.Id, CancellationToken.None
                     );
                 await context.SaveChangesAsync();
 
-                var getDoc = await docRepo.GetByIdAsync(documentToRemove.Id);
+                var getDoc = await docRepo.GetByIdAsync(documentToRemove.Id, CancellationToken.None);
                 var docTagsCount = await context.DocumentTags.CountAsync();
 
                 getDoc.ShouldBeNull();
@@ -163,24 +164,5 @@ namespace Notino.Application.UnitTests.Repositories
             }
         }
 
-        [Fact]
-        public async Task DeleteDocumentWithTagsAsync_NotExistingDocument_ThrowsNotFoundException()
-        {
-            var documentToRemove = new Domain.Document()
-            {
-                Id = "2",
-            };
-
-            using (var context = GetContextWithData(Guid.NewGuid().ToString()))
-            {
-                IDocumentRepository docRepo = new DocumentRepository(context);
-
-                var result = await Should.ThrowAsync<NotFoundException>(async () => 
-                    await docRepo.DeleteDocumentWithTagsAsync(documentToRemove.Id)
-                );
-
-                result.Message.ShouldBe($"Document with Id:'{documentToRemove.Id}' was not found");
-            }
-        }
     }
 }

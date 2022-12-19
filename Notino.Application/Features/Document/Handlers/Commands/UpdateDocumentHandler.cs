@@ -23,7 +23,7 @@ namespace Notino.Application.Features.Document.Handlers.Commands
                 throw new ArgumentNullException(nameof(docStorageOrchestrator));
         }
         
-        public async Task<Response> Handle(UpdateDocumentCommand request, CancellationToken cancellationToken)
+        public async Task<Response> Handle(UpdateDocumentCommand request, CancellationToken ct)
         {         
             var newDocument = new Domain.Document()
             {
@@ -31,7 +31,7 @@ namespace Notino.Application.Features.Document.Handlers.Commands
                 RawJson = JsonConvert.SerializeObject(request.DocumentDto)
             };
 
-            await _docStorageOrchestrator.UpdateAsync(newDocument, request.DocumentDto.Tags);
+            await _docStorageOrchestrator.UpdateAsync(newDocument, request.DocumentDto.Tags, ct);
 
             return new Response();
         }

@@ -2,6 +2,7 @@
 using Notino.Application.Contracts.Persistence;
 using Notino.Domain.Common;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Notino.Persistence.MSSQL.Repositories.Common
@@ -17,30 +18,30 @@ namespace Notino.Persistence.MSSQL.Repositories.Common
             _dbContext = dbContext;
         }
 
-        public async Task<bool> ExistsAsync(TKey id)
+        public async Task<bool> ExistsAsync(TKey id, CancellationToken ct)
         {
-            var entity = await GetByIdAsync(id);
+            var entity = await GetByIdAsync(id, ct);
             return entity != null;
         }
 
-        public async Task<TEntity> GetByIdAsync(TKey id)
+        public async Task<TEntity> GetByIdAsync(TKey id, CancellationToken ct)
         {
             return await _dbContext
                 .Set<TEntity>()
-                .SingleOrDefaultAsync(t => t.Id == id && !t.IsDeleted);
+                .SingleOrDefaultAsync(t => t.Id == id && !t.IsDeleted, ct);
         }       
 
-        public async Task AddAsync(TEntity entity)
+        public async Task AddAsync(TEntity entity, CancellationToken ct)
         {
-            await _dbContext.AddAsync(entity);           
+            await _dbContext.AddAsync(entity, ct);           
         }
 
-        public async Task DeleteAsync(TEntity entity)
+        public async Task DeleteAsync(TEntity entity, CancellationToken ct)
         {
             _dbContext.Set<TEntity>().Remove(entity);
         }
 
-        public async Task DeleteByIdAsync(TKey id)
+        public async Task DeleteByIdAsync(TKey id, CancellationToken ct)
         {
             throw new System.NotImplementedException();
         }

@@ -18,12 +18,12 @@ namespace Notino.Application.Features.Document.Handlers.Queries
             _unitOfWork = unitOfWork;            
         }
 
-        public async Task<RawResponseDto> Handle(GetDocumentRequest request, CancellationToken cancellationToken)
+        public async Task<RawResponseDto> Handle(GetDocumentRequest request, CancellationToken ct)
         {
           
             var document = await _unitOfWork
                 .DocumentRepository
-                .GetByIdAsync(request.Id);
+                .GetByIdAsync(request.Id, ct);
 
             if (document == null)
                 throw new NotFoundException(ValidationMessages.Id, request.Id);

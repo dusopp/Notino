@@ -4,6 +4,7 @@ using Notino.Domain;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Notino.Application.UnitTests.Mocks
@@ -31,15 +32,15 @@ namespace Notino.Application.UnitTests.Mocks
             var mockRepo = new Mock<IDocumentRepository>();
 
             mockRepo.Setup(r =>
-                r.AddDocumentWithTagsAsync(It.IsAny<Domain.Document>(), It.IsAny<IEnumerable<string>>(), It.IsAny<bool>()))
-                .ReturnsAsync((Domain.Document document, IEnumerable<string> tagnames, bool test) => {
+                r.AddDocumentWithTagsAsync(It.IsAny<Domain.Document>(), It.IsAny<IEnumerable<string>>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()))
+                .ReturnsAsync((Domain.Document document, IEnumerable<string> tagnames, CancellationToken ct, bool test) => {
                     documents.Add(document);
                     return document;
                 });
 
             mockRepo.Setup(r =>
-                r.UpdateDocumentWithTagsAsync(It.IsAny<Domain.Document>(), It.IsAny<IEnumerable<string>>()))
-                .ReturnsAsync((Domain.Document document, IEnumerable<string> tagnames) => {
+                r.UpdateDocumentWithTagsAsync(It.IsAny<Domain.Document>(), It.IsAny<IEnumerable<string>>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync((Domain.Document document, IEnumerable<string> tagnames, CancellationToken ct) => {
                     var index = documents.FindIndex(d => d.Id == document.Id);
                     documents.RemoveAt(index);
                     documents.Add(document);
@@ -48,16 +49,16 @@ namespace Notino.Application.UnitTests.Mocks
                 });
 
             mockRepo.Setup(r =>
-                r.GetByIdAsync(It.IsAny<string>()))
-                .ReturnsAsync((string id) => {
+                r.GetByIdAsync(It.IsAny<string>(), CancellationToken.None))
+                .ReturnsAsync((string id, CancellationToken ct) => {
                     var index = documents.FindIndex(d => d.Id == id);                 
  
                     return documents[index];
                 });
 
             mockRepo.Setup(r =>
-                r.DeleteDocumentWithTagsAsync(It.IsAny<string>()))
-                .Returns((Domain.Document document) => {
+                r.DeleteDocumentWithTagsAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+                .Returns((Domain.Document document, CancellationToken ct) => {
                   var index = documents.FindIndex(d => d.Id == document.Id);
                   documents.RemoveAt(index);
 
