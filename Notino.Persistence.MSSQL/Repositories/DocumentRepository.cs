@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Notino.Application.Contracts.Persistence;
 using Notino.Application.Exceptions;
-using Notino.Domain;
+using Notino.Domain.Entities;
 using Notino.Persistence.MSSQL.Repositories.Common;
 using System;
 using System.Collections.Generic;

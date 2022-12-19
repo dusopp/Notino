@@ -1,4 +1,4 @@
-﻿namespace Notino.Domain
+﻿namespace Notino.Domain.Entities
 {
     public class DocumentTag
     {

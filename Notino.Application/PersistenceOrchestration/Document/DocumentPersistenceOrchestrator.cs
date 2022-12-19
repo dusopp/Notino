@@ -28,7 +28,7 @@ namespace Notino.Application.PersistenceOrchestration.Document
                 _documentRepositories.Add(repo);
         }
 
-        public async Task AddAsync(Domain.Document document, IEnumerable<string> tagNames, CancellationToken ct)
+        public async Task AddAsync(Domain.Entities.Document document, IEnumerable<string> tagNames, CancellationToken ct)
         {
             if (document == null)
                 throw new ArgumentNullException(nameof(document));
@@ -97,7 +97,7 @@ namespace Notino.Application.PersistenceOrchestration.Document
             }
         }
 
-        public async Task UpdateAsync(Domain.Document document, IEnumerable<string> tagNames, CancellationToken ct)
+        public async Task UpdateAsync(Domain.Entities.Document document, IEnumerable<string> tagNames, CancellationToken ct)
         {
             if (document == null)
                 throw new ArgumentNullException(nameof(document));

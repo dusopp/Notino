@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Notino.Application.Contracts.Persistence;
-using Notino.Domain.Common;
-using System.Linq;
+using Notino.Domain.Entities.Common;
 using System.Threading;
 using System.Threading.Tasks;
 

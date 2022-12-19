@@ -1,4 +1,4 @@
-﻿namespace Notino.Domain.Common
+﻿namespace Notino.Domain.Entities.Common
 {
     public interface IEntityWithRawJson
     {

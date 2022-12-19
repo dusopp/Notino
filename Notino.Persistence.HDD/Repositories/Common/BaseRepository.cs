@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 using Notino.Application.Contracts.Persistence;
-using Notino.Domain.Common;
+using Notino.Domain.Entities.Common;
 using System;
 using System.IO;
 using System.Threading;

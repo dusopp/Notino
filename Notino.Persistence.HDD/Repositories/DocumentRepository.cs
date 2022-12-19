@@ -1,6 +1,6 @@
 ﻿using Notino.Application.Contracts.Persistence;
 using Notino.Application.Exceptions;
-using Notino.Domain;
+using Notino.Domain.Entities;
 using Notino.Persistence.HDD.Repositories.Common;
 using System;
 using System.Collections.Generic;

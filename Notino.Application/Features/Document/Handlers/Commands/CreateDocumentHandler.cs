@@ -1,6 +1,5 @@
 ﻿using Newtonsoft.Json;
 using Notino.Application.Contracts.Messaging;
-using Notino.Application.Contracts.Persistence;
 using Notino.Application.Contracts.PersistenceOrchestration;
 using Notino.Application.Features.Document.Requests.Commands;
 using Notino.Application.Responses;
@@ -25,7 +24,7 @@ namespace Notino.Application.Features.Document.Handlers.Commands
         
         public async Task<Response> Handle(CreateDocumentCommand request, CancellationToken ct)
         {         
-            var newDocument = new Domain.Document()
+            var newDocument = new Domain.Entities.Document()
             {
                 Id = request.DocumentDto.Id,
                 RawJson = JsonConvert.SerializeObject(request.DocumentDto)

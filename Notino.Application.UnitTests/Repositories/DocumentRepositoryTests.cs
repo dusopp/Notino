@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Notino.Application.Contracts.Persistence;
 using Notino.Application.Exceptions;
+using Notino.Domain.Entities;
 using Notino.Persistence.MSSQL;
 using Notino.Persistence.MSSQL.Repositories;
 using Shouldly;
@@ -30,7 +31,7 @@ namespace Notino.Application.UnitTests.Repositories
             var dbContext = new NotinoDbContext(_contextOptions);
             
                 dbContext.Tags.Add(
-                    new Domain.Tag()
+                    new Tag()
                     {
                         Id = 1,
                         Name = "a"
@@ -38,7 +39,7 @@ namespace Notino.Application.UnitTests.Repositories
                 );
 
                 dbContext.Tags.Add(
-                    new Domain.Tag()
+                    new Tag()
                     {
                         Id = 2,
                         Name = "b"
@@ -46,15 +47,15 @@ namespace Notino.Application.UnitTests.Repositories
                 );
 
                 dbContext.Documents.Add(
-                    new Domain.Document()
+                    new Document()
                     {
                         Id = "1",
                         RawJson = @"{""Tags"":[""a"",""b""],""Data"":{""some"":""data"",""optional"":""fields""},""Id"":""1""}",
                     }
                 );
 
-                dbContext.DocumentTags.Add(new Domain.DocumentTag { DocumentId = "1", TagId = 1 });
-                dbContext.DocumentTags.Add(new Domain.DocumentTag { DocumentId = "1", TagId = 2 });
+                dbContext.DocumentTags.Add(new DocumentTag { DocumentId = "1", TagId = 1 });
+                dbContext.DocumentTags.Add(new DocumentTag { DocumentId = "1", TagId = 2 });
                 dbContext.SaveChanges();
 
                 return dbContext;
@@ -92,7 +93,7 @@ namespace Notino.Application.UnitTests.Repositories
         [Fact]
         public async Task AddDocumentWithTagsAsync_NewDocumentWithTwoNewTags_ShouldReturnDocument()
         {
-            var documentToAdd = new Domain.Document()
+            var documentToAdd = new Document()
             {
                 Id = "3",
                 RawJson = @"{""Tags"":[""a"",""b""],""Data"":{""some"":""data"",""optional"":""fields""},""Id"":""3""}",
@@ -121,7 +122,7 @@ namespace Notino.Application.UnitTests.Repositories
         [Fact]
         public async Task AddDocumentWithTagsAsync_NewDocumentNoNewTags_ShouldReturnDocument()
         {
-            var documentToAdd = new Domain.Document()
+            var documentToAdd = new Document()
             {
                 Id = "3",
                 RawJson = @"{""Tags"":[""k"",""u""],""Data"":{""some"":""data"",""optional"":""fields""},""Id"":""3""}",
@@ -150,7 +151,7 @@ namespace Notino.Application.UnitTests.Repositories
         [Fact]
         public async Task AddDocumentWithTagsAsync_DocumentWithExistingId_ThrowsAlreadyExistsException()
         {
-            var documentToAdd = new Domain.Document()
+            var documentToAdd = new Document()
             {
                 Id = "1"                
             };            
@@ -172,7 +173,7 @@ namespace Notino.Application.UnitTests.Repositories
         [Fact]
         public async Task DeleteDocumentWithTagsAsync_ExistingDocument_ShouldReturnDocumentId()
         {
-            var documentToRemove = new Domain.Document()
+            var documentToRemove = new Document()
             {
                 Id = "1",               
             };            
@@ -196,7 +197,7 @@ namespace Notino.Application.UnitTests.Repositories
         [Fact]
         public async Task UpdateDocumentWithTagsAsync_ExistingDocumentWithTwoNewTags_ShouldReturnUpdatedDocument()
         {
-            var documentToUpdate = new Domain.Document()
+            var documentToUpdate = new Document()
             {
                 Id = "1",
                 RawJson = @"{""Tags"":[""p"",""t""],""Data"":{""some"":""data"",""optional"":""fields""},""Id"":""1""}",
@@ -224,7 +225,7 @@ namespace Notino.Application.UnitTests.Repositories
         [Fact]
         public async Task UpdateDocumentWithTagsAsync_ExistingDocumentNoNewTags_ShouldReturnUpdatedDocument()
         {
-            var documentToUpdate = new Domain.Document()
+            var documentToUpdate = new Document()
             {
                 Id = "1",
                 RawJson = @"{""Tags"":[""a"",""b""],""Data"":{""some"":""test"",""optional"":""test2""},""Id"":""1""}",

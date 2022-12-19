@@ -19,7 +19,7 @@ namespace Notino.Persistence.MSSQL.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-            modelBuilder.Entity("Notino.Domain.Document", b =>
+            modelBuilder.Entity("Notino.Domain.Entities.Document", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
@@ -48,7 +48,7 @@ namespace Notino.Persistence.MSSQL.Migrations
                     b.ToTable("Documents");
                 });
 
-            modelBuilder.Entity("Notino.Domain.DocumentTag", b =>
+            modelBuilder.Entity("Notino.Domain.Entities.DocumentTag", b =>
                 {
                     b.Property<string>("DocumentId")
                         .HasColumnType("nvarchar(450)");
@@ -66,7 +66,7 @@ namespace Notino.Persistence.MSSQL.Migrations
                     b.ToTable("DocumentTags");
                 });
 
-            modelBuilder.Entity("Notino.Domain.Tag", b =>
+            modelBuilder.Entity("Notino.Domain.Entities.Tag", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -83,22 +83,26 @@ namespace Notino.Persistence.MSSQL.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique()
+                        .HasFilter("[Name] IS NOT NULL");
 
                     b.ToTable("Tags");
                 });
 
-            modelBuilder.Entity("Notino.Domain.DocumentTag", b =>
+            modelBuilder.Entity("Notino.Domain.Entities.DocumentTag", b =>
                 {
-                    b.HasOne("Notino.Domain.Tag", "Tag")
+                    b.HasOne("Notino.Domain.Entities.Tag", "Tag")
                         .WithMany("DocumentTag")
                         .HasForeignKey("TagId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Notino.Domain.Document", "Document")
+                    b.HasOne("Notino.Domain.Entities.Document", "Document")
                         .WithMany("DocumentTag")
                         .HasForeignKey("DocumentId", "DocumentInternalId")
                         .OnDelete(DeleteBehavior.Cascade)

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Notino.Domain.Common
+namespace Notino.Domain.Entities.Common
 {
     public interface IBaseDomainEntityWithRawJson<TKey> : 
         IBaseDomainEntity<TKey>, 

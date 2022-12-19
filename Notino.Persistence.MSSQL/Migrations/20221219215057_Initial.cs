@@ -69,6 +69,13 @@ namespace Notino.Persistence.MSSQL.Migrations
                 name: "IX_DocumentTags_TagId",
                 table: "DocumentTags",
                 column: "TagId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Tags_Name",
+                table: "Tags",
+                column: "Name",
+                unique: true,
+                filter: "[Name] IS NOT NULL");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

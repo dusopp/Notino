@@ -25,7 +25,7 @@ namespace Notino.Application.Features.Document.Handlers.Commands
         
         public async Task<Response> Handle(UpdateDocumentCommand request, CancellationToken ct)
         {         
-            var newDocument = new Domain.Document()
+            var newDocument = new Domain.Entities.Document()
             {
                 Id = request.DocumentDto.Id,
                 RawJson = JsonConvert.SerializeObject(request.DocumentDto)

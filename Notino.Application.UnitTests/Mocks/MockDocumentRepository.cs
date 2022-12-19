@@ -1,9 +1,7 @@
 ﻿using Moq;
 using Notino.Application.Contracts.Persistence;
-using Notino.Domain;
-using System;
+using Notino.Domain.Entities;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -13,34 +11,34 @@ namespace Notino.Application.UnitTests.Mocks
     {
         public static Mock<IDocumentRepository> GetDocumentRepository()
         {
-            var documents = new List<Domain.Document>
+            var documents = new List<Document>
             {
-                new Domain.Document
+                new Document
                 {
                     Id = "1",
                     RawJson = @"{""Tags"":[""h"",""f""],""Data"":{""some"":""data"",""optional"":""fields""},""Id"":""1""}",
-                    DocumentTag = new LinkedList<Domain.DocumentTag>()
+                    DocumentTag = new LinkedList<DocumentTag>()
                 },
-                new Domain.Document
+                new Document
                 {
                     Id = "2",
                     RawJson = @"{""Tags"":[""a"",""b""],""Data"":{""some"":""data"",""optional"":""fields""},""Id"":""2""}",
-                    DocumentTag = new LinkedList<Domain.DocumentTag>()
+                    DocumentTag = new LinkedList<DocumentTag>()
                 }
             };
 
             var mockRepo = new Mock<IDocumentRepository>();
 
             mockRepo.Setup(r =>
-                r.AddDocumentWithTagsAsync(It.IsAny<Domain.Document>(), It.IsAny<IEnumerable<string>>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()))
-                .ReturnsAsync((Domain.Document document, IEnumerable<string> tagnames, CancellationToken ct, bool test) => {
+                r.AddDocumentWithTagsAsync(It.IsAny<Document>(), It.IsAny<IEnumerable<string>>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()))
+                .ReturnsAsync((Document document, IEnumerable<string> tagnames, CancellationToken ct, bool test) => {
                     documents.Add(document);
                     return document;
                 });
 
             mockRepo.Setup(r =>
-                r.UpdateDocumentWithTagsAsync(It.IsAny<Domain.Document>(), It.IsAny<IEnumerable<string>>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync((Domain.Document document, IEnumerable<string> tagnames, CancellationToken ct) => {
+                r.UpdateDocumentWithTagsAsync(It.IsAny<Document>(), It.IsAny<IEnumerable<string>>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync((Document document, IEnumerable<string> tagnames, CancellationToken ct) => {
                     var index = documents.FindIndex(d => d.Id == document.Id);
                     documents.RemoveAt(index);
                     documents.Add(document);
@@ -58,7 +56,7 @@ namespace Notino.Application.UnitTests.Mocks
 
             mockRepo.Setup(r =>
                 r.DeleteDocumentWithTagsAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
-                .Returns((Domain.Document document, CancellationToken ct) => {
+                .Returns((Document document, CancellationToken ct) => {
                   var index = documents.FindIndex(d => d.Id == document.Id);
                   documents.RemoveAt(index);
 
