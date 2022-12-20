@@ -1,5 +1,5 @@
 ﻿using MessagePack;
-using Notino.Application.Contracts.ResponseConversion.Converters;
+using Notino.Domain.Contracts.ResponseConversion.Converters;
 using System.Text;
 
 namespace Notino.Application.ResponseConversion.Converters

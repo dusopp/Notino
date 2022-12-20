@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Notino.Application.Contracts.PersistenceOrchestration
+namespace Notino.Domain.Contracts.PersistenceOrchestration
 {
     public interface IDocumentPersistenceOrchestrator
     {

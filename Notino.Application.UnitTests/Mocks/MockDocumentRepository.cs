@@ -1,5 +1,5 @@
 ﻿using Moq;
-using Notino.Application.Contracts.Persistence;
+using Notino.Domain.Contracts.Persistence;
 using Notino.Domain.Entities;
 using System.Collections.Generic;
 using System.Threading;
@@ -51,16 +51,17 @@ namespace Notino.Application.UnitTests.Mocks
                 .ReturnsAsync((string id, CancellationToken ct) => {
                     var index = documents.FindIndex(d => d.Id == id);                 
  
-                    return documents[index];
+                    return index > -1 ? documents[index] : null;
                 });
 
             mockRepo.Setup(r =>
                 r.DeleteDocumentWithTagsAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
-                .Returns((Document document, CancellationToken ct) => {
-                  var index = documents.FindIndex(d => d.Id == document.Id);
+                .ReturnsAsync((string id, CancellationToken ct) => {
+                  var index = documents.FindIndex(d => d.Id == id);
+                  var doc = documents[index];
                   documents.RemoveAt(index);
 
-                  return Task.FromResult(document.Id);
+                  return doc;
               });
 
             return mockRepo;

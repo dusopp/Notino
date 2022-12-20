@@ -1,7 +1,7 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 
-namespace Notino.Application.Contracts.Persistence
+namespace Notino.Domain.Contracts.Persistence
 {
     public interface IRepository<TEntity, TKey> where TEntity : class
     {   

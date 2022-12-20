@@ -2,10 +2,10 @@
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using Notino.Application.Behaviours;
-using Notino.Application.Contracts.PersistenceOrchestration;
-using Notino.Application.Contracts.ResponseConversion.Factory;
 using Notino.Application.PersistenceOrchestration.Document;
 using Notino.Application.ResponseConversion.Factory;
+using Notino.Domain.Contracts.PersistenceOrchestration;
+using Notino.Domain.Contracts.ResponseConversion.Factory;
 using System.Reflection;
 
 namespace Notino.Application.DI

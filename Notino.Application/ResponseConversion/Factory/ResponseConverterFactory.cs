@@ -1,9 +1,8 @@
 ﻿using Microsoft.Extensions.Logging;
-using Notino.Application.Contracts.ResponseConversion.Converters;
-using Notino.Application.Contracts.ResponseConversion.Factory;
 using Notino.Application.Exceptions;
-using Notino.Application.ResponseConversion.Converters;
 using Notino.CrossCutting.Extensions;
+using Notino.Domain.Contracts.ResponseConversion.Converters;
+using Notino.Domain.Contracts.ResponseConversion.Factory;
 using System;
 
 namespace Notino.Application.ResponseConversion.Factory

@@ -1,10 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Notino.Application.Contracts.Persistence;
+using Notino.Domain.Contracts.Persistence;
 using Notino.Persistence.MSSQL.Repositories;
 using Notino.Persistence.MSSQL.Repositories.Common;
-using System.ComponentModel;
 
 namespace Notino.Persistence.MSSQL.DI
 {

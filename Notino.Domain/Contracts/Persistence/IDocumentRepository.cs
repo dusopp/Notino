@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Notino.Application.Contracts.Persistence
+namespace Notino.Domain.Contracts.Persistence
 {
     public interface IDocumentRepository : IRepository<Document, string>
     {        
@@ -15,6 +15,6 @@ namespace Notino.Application.Contracts.Persistence
 
         Task<Document> UpdateDocumentWithTagsAsync(Document documentToUpdate, IEnumerable<string> updatedDocumentTagNames, CancellationToken ct);
 
-        Task<string> DeleteDocumentWithTagsAsync(string id, CancellationToken ct);
+        Task<Document> DeleteDocumentWithTagsAsync(string id, CancellationToken ct);
     }
 }

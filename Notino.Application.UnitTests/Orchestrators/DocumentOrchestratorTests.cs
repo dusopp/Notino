@@ -1,7 +1,9 @@
-﻿using Moq;
-using Notino.Application.Contracts.Persistence;
+﻿using Microsoft.Extensions.Logging;
+using Moq;
 using Notino.Application.PersistenceOrchestration.Document;
 using Notino.Application.UnitTests.Mocks;
+using Notino.Domain.Contracts.Persistence;
+using Notino.Domain.Contracts.PersistenceOrchestration;
 using Notino.Domain.Entities;
 using Shouldly;
 using System;
@@ -16,18 +18,21 @@ namespace Notino.Application.UnitTests.Orchestrators
     {
        
         private readonly Mock<IDocumentRepository> _mockDocumentRepo;
-        private readonly DocumentPersistenceOrchestrator _documentPersistenceOrchestrator;
+        private readonly IDocumentPersistenceOrchestrator _documentPersistenceOrchestrator;
 
         public DocumentOrchestratorTests()
         {                      
-            _mockDocumentRepo = MockDocumentRepository.GetDocumentRepository();           
+            _mockDocumentRepo = MockDocumentRepository.GetDocumentRepository();
+            var mockLogger = new Mock<ILogger<DocumentPersistenceOrchestrator>>();
             _documentPersistenceOrchestrator = new DocumentPersistenceOrchestrator(
-                new List<IDocumentRepository>(){ _mockDocumentRepo.Object }               
+                new List<IDocumentRepository>(){ _mockDocumentRepo.Object }, mockLogger.Object
             );           
         }
 
+        #region Add Method Tests
+
         [Fact]
-        public async Task Add_ValidDocument_ShouldReturnTrue()
+        public async Task Add_ValidDocument_DocumentAdded()
         {
             var documentToAdd = new Document()
             {
@@ -76,9 +81,11 @@ namespace Notino.Application.UnitTests.Orchestrators
             result.Message.ShouldBe("Value cannot be null. (Parameter 'tagNames')");
         }
 
+        #endregion
 
+        #region Update Method Tests
         [Fact]
-        public async Task Update_ValidDocument_ShouldReturnTrue()
+        public async Task Update_ValidDocument_DocumentUpdated()
         {
             var documentToAdd = new Document()
             {
@@ -86,8 +93,7 @@ namespace Notino.Application.UnitTests.Orchestrators
                 RawJson = @"{""Tags"":[""test"",""b""],""Data"":{""some"":""data"",""optional"":""fields""},""Id"":""2""}",
                 DocumentTag = new LinkedList<DocumentTag>()
             };
-
-            //_mockDocumentRepo.Setup(r => r.);
+            
             await _documentPersistenceOrchestrator
                 .UpdateAsync(documentToAdd, new List<string>() { "tag" }, CancellationToken.None);
 
@@ -114,5 +120,7 @@ namespace Notino.Application.UnitTests.Orchestrators
 
             result.Message.ShouldBe("Value cannot be null. (Parameter 'document')");
         }
+
+        #endregion
     }
 }

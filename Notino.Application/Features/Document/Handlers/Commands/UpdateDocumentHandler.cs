@@ -1,10 +1,8 @@
-﻿using MediatR;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using Notino.Application.Contracts.Messaging;
-using Notino.Application.Contracts.Persistence;
-using Notino.Application.Contracts.PersistenceOrchestration;
 using Notino.Application.Features.Document.Requests.Commands;
 using Notino.Application.Responses;
+using Notino.Domain.Contracts.PersistenceOrchestration;
 using System;
 using System.Threading;
 using System.Threading.Tasks;

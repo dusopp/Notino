@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using Notino.Application.Constants.ErrorMessages;
+using Notino.Application.Constants.HttpHeaders;
 using Notino.Application.Exceptions;
 using Notino.Application.Responses;
 using System;
@@ -50,9 +52,9 @@ namespace Notino.API.Middleware
 
         private Task HandleExceptionAsync(HttpContext httpContext, Exception ex)
         {            
-            httpContext.Response.ContentType = "application/json";
+            httpContext.Response.ContentType = AcceptHeaders.Json;
             HttpStatusCode statusCode = HttpStatusCode.InternalServerError;
-            string errorMessage = "Internal server error.";
+            string errorMessage = ResponseErrorMessages.InternalErrorMsg;
             IEnumerable<string> errors = null;
             
             switch (ex)
@@ -69,7 +71,7 @@ namespace Notino.API.Middleware
                     break;
                 case ValidationException validationEx:
                     statusCode = HttpStatusCode.BadRequest;
-                    errorMessage = "Validation Error";
+                    errorMessage = ResponseErrorMessages.ValidationErrorMsg;
                     errors = validationEx.Errors;
                     
                     break;
@@ -93,7 +95,6 @@ namespace Notino.API.Middleware
             }
 
             var result = Response.CreateErrorResponse((int)statusCode, errorMessage, errors);
-
             httpContext.Response.StatusCode = (int)statusCode;
 
             return httpContext

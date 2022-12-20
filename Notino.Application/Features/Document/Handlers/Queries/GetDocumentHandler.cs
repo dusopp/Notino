@@ -1,9 +1,8 @@
 ﻿using MediatR;
-using Notino.Application.Constants.Validation;
-using Notino.Application.Contracts.Persistence;
 using Notino.Application.DTOs.Common;
 using Notino.Application.Exceptions;
 using Notino.Application.Features.Document.Requests.Queries;
+using Notino.Domain.Contracts.Persistence;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -26,12 +25,10 @@ namespace Notino.Application.Features.Document.Handlers.Queries
             if (document == null)
                 throw new NotFoundException(nameof(Domain.Entities.Document), request.Id);
 
-            var rawReposnseDto = new RawResponseDto()
+            return new RawResponseDto()
             { 
                 RawResponse = document.RawJson
-            };
-
-            return rawReposnseDto;
+            };            
         }
     }
 }

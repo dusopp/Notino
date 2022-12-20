@@ -1,13 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Notino.Application.Contracts.Persistence;
 using Notino.Application.Exceptions;
+using Notino.Domain.Contracts.Persistence;
 using Notino.Domain.Entities;
 using Notino.Persistence.MSSQL;
 using Notino.Persistence.MSSQL.Repositories;
 using Shouldly;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
@@ -15,11 +14,9 @@ using Xunit;
 namespace Notino.Application.UnitTests.Repositories
 {
     public class DocumentRepositoryTests
-    {
-        private DbContextOptions<NotinoDbContext> _contextOptions;
-
+    {      
         public DocumentRepositoryTests()
-        {            
+        {
         }
 
         private NotinoDbContext GetContextWithData(string dbName) 
@@ -59,12 +56,12 @@ namespace Notino.Application.UnitTests.Repositories
                 dbContext.SaveChanges();
 
                 return dbContext;
-         }        
+         }
 
+        #region GetByIdAsync
         [Fact]
-        public async Task GetById_ExistingDocument_ShouldReturnDocument()
-        {
-            
+        public async Task GetByIdAsync_ExistingDocument_ShouldReturnDocument()
+        {            
             var documentId = "1";
   
             using (var context = GetContextWithData(Guid.NewGuid().ToString()))
@@ -78,7 +75,7 @@ namespace Notino.Application.UnitTests.Repositories
         }
 
         [Fact]
-        public async Task GetById_NotExistingDocument_ShouldReturnNull()
+        public async Task GetByIdAsync_NotExistingDocument_ShouldReturnNull()
         {
             var documentId = "3";            
             using (var context = GetContextWithData(Guid.NewGuid().ToString()))
@@ -89,6 +86,9 @@ namespace Notino.Application.UnitTests.Repositories
                 document.ShouldBeNull();                
             }
         }
+        #endregion
+
+        #region AddDocumentWithTagsAsync
 
         [Fact]
         public async Task AddDocumentWithTagsAsync_NewDocumentWithTwoNewTags_ShouldReturnDocument()
@@ -170,6 +170,8 @@ namespace Notino.Application.UnitTests.Repositories
             }
         }
 
+        #endregion
+
         [Fact]
         public async Task DeleteDocumentWithTagsAsync_ExistingDocument_ShouldReturnDocumentId()
         {
@@ -194,6 +196,7 @@ namespace Notino.Application.UnitTests.Repositories
             }
         }
 
+        #region UpdateDocumentWithTagsAsync
         [Fact]
         public async Task UpdateDocumentWithTagsAsync_ExistingDocumentWithTwoNewTags_ShouldReturnUpdatedDocument()
         {
@@ -249,6 +252,8 @@ namespace Notino.Application.UnitTests.Repositories
                 tagsCount.ShouldBe(2);
             }
         }
+
+        #endregion
 
     }
 }

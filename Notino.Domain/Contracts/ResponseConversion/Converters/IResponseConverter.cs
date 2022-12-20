@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace Notino.Application.Contracts.ResponseConversion.Converters
+namespace Notino.Domain.Contracts.ResponseConversion.Converters
 {
     public interface IResponseConverter
     {

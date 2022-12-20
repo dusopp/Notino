@@ -1,5 +1,5 @@
-﻿using Notino.Application.Contracts.Persistence;
-using Notino.Application.Exceptions;
+﻿using Notino.Application.Exceptions;
+using Notino.Domain.Contracts.Persistence;
 using Notino.Domain.Entities;
 using Notino.Persistence.HDD.Repositories.Common;
 using System;
@@ -31,11 +31,11 @@ namespace Notino.Persistence.HDD.Repositories
             return document;
         }
 
-        public async Task<string> DeleteDocumentWithTagsAsync(string id, CancellationToken ct)
+        public async Task<Document> DeleteDocumentWithTagsAsync(string id, CancellationToken ct)
         {
             await DeleteByIdAsync(id, ct);    
             
-            return id;
+            return new Document();
         }
 
         public Task<Document> UpdateDocumentWithTagsAsync(Document documentToUpdate, IEnumerable<string> updatedDocumentTagNames, CancellationToken ct)

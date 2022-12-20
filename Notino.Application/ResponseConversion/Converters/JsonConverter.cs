@@ -1,5 +1,4 @@
-﻿using Notino.Application.Contracts.ResponseConversion.Converters;
-using System.Threading.Tasks;
+﻿using Notino.Domain.Contracts.ResponseConversion.Converters;
 
 namespace Notino.Application.ResponseConversion.Converters
 {

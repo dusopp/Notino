@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Notino.Application.Contracts.Persistence;
 using Notino.Application.Exceptions;
+using Notino.Domain.Contracts.Persistence;
 using Notino.Domain.Entities;
 using Notino.Persistence.MSSQL.Repositories.Common;
 using System;
@@ -58,7 +58,7 @@ namespace Notino.Persistence.MSSQL.Repositories
                 .ToList();
         }
 
-        public async Task<string> DeleteDocumentWithTagsAsync(string id, CancellationToken ct)
+        public async Task<Document> DeleteDocumentWithTagsAsync(string id, CancellationToken ct)
         {
             var document = await _dbContext
                 .Documents
@@ -76,7 +76,7 @@ namespace Notino.Persistence.MSSQL.Repositories
 
                 await _dbContext.SaveChangesAsync(ct);
 
-                return document.Id;
+                return document;
             }
 
             return null;

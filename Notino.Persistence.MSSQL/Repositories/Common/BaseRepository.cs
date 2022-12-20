@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Notino.Application.Contracts.Persistence;
+using Notino.Domain.Contracts.Persistence;
 using Notino.Domain.Entities.Common;
 using System.Threading;
 using System.Threading.Tasks;

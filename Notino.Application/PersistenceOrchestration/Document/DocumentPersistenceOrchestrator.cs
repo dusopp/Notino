@@ -1,9 +1,9 @@
-﻿using Microsoft.Extensions.Options;
-using Notino.Application.Contracts.Persistence;
-using Notino.Application.Contracts.PersistenceOrchestration;
-using Notino.Application.Settings;
+﻿using Microsoft.Extensions.Logging;
+using Notino.Domain.Contracts.Persistence;
+using Notino.Domain.Contracts.PersistenceOrchestration;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -12,20 +12,25 @@ namespace Notino.Application.PersistenceOrchestration.Document
     public class DocumentPersistenceOrchestrator : IDocumentPersistenceOrchestrator
     {
         private readonly List<IDocumentRepository> _documentRepositories;
-        
-        public DocumentPersistenceOrchestrator(
-            //IOptions<PersistenceSettings> options,
-            IEnumerable<IDocumentRepository> docRepos
+        private readonly ILogger<DocumentPersistenceOrchestrator> _logger;
+
+        public DocumentPersistenceOrchestrator(            
+            IEnumerable<IDocumentRepository> docRepos, ILogger<DocumentPersistenceOrchestrator> logger
             )
         {
             if (docRepos == null)
                 throw new ArgumentNullException(nameof(docRepos));
 
-            //var settings = options.Value;
+            if (logger == null)
+                throw new ArgumentNullException(nameof(logger));
+
             _documentRepositories = new List<IDocumentRepository>();
- 
+            _logger = logger;
+
             foreach (var repo in docRepos)            
                 _documentRepositories.Add(repo);
+            
+            
         }
 
         public async Task AddAsync(Domain.Entities.Document document, IEnumerable<string> tagNames, CancellationToken ct)
@@ -37,9 +42,10 @@ namespace Notino.Application.PersistenceOrchestration.Document
                 throw new ArgumentNullException(nameof(tagNames));
 
 
-            var createTasks = new List<Task>();
-            var revertFuncs = new Dictionary<int, Func<string, CancellationToken, Task>>();
-
+            var createTasks = new List<Task<Domain.Entities.Document>>();
+            var revertFuncs = new Dictionary<int, Func<string, CancellationToken, Task<Domain.Entities.Document>>>();
+            
+            
             for (int i = 0; i < _documentRepositories.Count; i++)
             {
                 createTasks.Add(_documentRepositories[i]
@@ -47,16 +53,24 @@ namespace Notino.Application.PersistenceOrchestration.Document
                 revertFuncs.Add(i, _documentRepositories[i].DeleteDocumentWithTagsAsync);
             }
 
-          
-            var result = Task.WhenAll(createTasks);
+            Task aggregationTask = Task.WhenAll(createTasks);
 
             try
-            {
-                await result;
+            {                           
+                await aggregationTask;
             }
-            catch
-            {                
+            catch(Exception ex)
+            {
+                _logger.LogError(ex, $"Error adding document: Id:{document.Id}, RawJson: {document.RawJson}");
+                
+                if (aggregationTask?.Exception?.InnerExceptions != null && 
+                    aggregationTask.Exception.InnerExceptions.Any())
+                foreach (var innerEx in aggregationTask.Exception.InnerExceptions)               
+                    _logger.LogError(innerEx, "AggregateException");               
+
+
                 await RevertAsync(createTasks, document.Id, revertFuncs, ct);
+                
                 throw;
             }                   
         }
@@ -65,11 +79,17 @@ namespace Notino.Application.PersistenceOrchestration.Document
             For future consideration, moving this method to common BaseOrchestratorClass.   
             Now premature optimisation
         */
-        public async Task RevertAsync(List<Task> failedTasks, string id, Dictionary<int, Func<string, CancellationToken, Task>> revertFuncs, CancellationToken ct, int revertsCnt = 0)
+        public async Task RevertAsync(
+            List<Task<Domain.Entities.Document>> failedTasks, 
+            string id, 
+            Dictionary<int, Func<string, CancellationToken, Task<Domain.Entities.Document>>> revertFuncs, 
+            CancellationToken ct, 
+            int revertsCnt = 0)
         {
-            var revertMethodsDict = new Dictionary<int, Func<string, CancellationToken, Task>>();
-            var revertTasks = new List<Task>();
+            var revertMethodsDict = new Dictionary<int, Func<string, CancellationToken, Task<Domain.Entities.Document>>>();
+            var revertTasks = new List<Task<Domain.Entities.Document>>();            
 
+            
             for (int i = 0; i < failedTasks.Count; i++)
             {
                 if (!failedTasks[i].IsFaulted)
@@ -83,21 +103,34 @@ namespace Notino.Application.PersistenceOrchestration.Document
                 }
             }
 
-            var result = Task.WhenAll(revertTasks);
+            Task aggregationTask = Task.WhenAll(revertTasks);
             try
             {
-                await result;
+                await aggregationTask;
             }
-            catch
+            catch(Exception ex)
             {
-                if (revertsCnt > 3)
+                if (revertsCnt > 2)
+                {
+                    _logger.LogError(ex, $"Error reverting document: Id:{id}");
+
+                    if (aggregationTask?.Exception?.InnerExceptions != null &&
+                        aggregationTask.Exception.InnerExceptions.Any())
+                        foreach (var innerEx in aggregationTask.Exception.InnerExceptions)
+                            _logger.LogError(innerEx, "AggregateException");
+
                     throw;
+                }
+                    
 
                 await RevertAsync(revertTasks, id, revertFuncs, ct, ++revertsCnt);
             }
         }
 
-        public async Task UpdateAsync(Domain.Entities.Document document, IEnumerable<string> tagNames, CancellationToken ct)
+        public async Task UpdateAsync(
+            Domain.Entities.Document document,
+            IEnumerable<string> tagNames,
+            CancellationToken ct)
         {
             if (document == null)
                 throw new ArgumentNullException(nameof(document));
@@ -105,8 +138,8 @@ namespace Notino.Application.PersistenceOrchestration.Document
             if (tagNames == null)
                 throw new ArgumentNullException(nameof(tagNames));
 
-            var updateTasks = new List<Task>();
-            var revertFuncs = new Dictionary<int, Func<string, CancellationToken, Task>>();
+            var updateTasks = new List<Task<Domain.Entities.Document>>();
+            var revertFuncs = new Dictionary<int, Func<string, CancellationToken, Task<Domain.Entities.Document>>>();
 
             for (int i = 0; i < _documentRepositories.Count; i++)
             {
@@ -115,14 +148,21 @@ namespace Notino.Application.PersistenceOrchestration.Document
                 revertFuncs.Add(i, _documentRepositories[i].DeleteDocumentWithTagsAsync);
             }
 
-            var result = Task.WhenAll(updateTasks);
+            var aggregationTask = Task.WhenAll(updateTasks);
 
             try
             {
-                await result;
+                await aggregationTask;
             }
-            catch
+            catch(Exception ex)
             {
+                _logger.LogError(ex, $"Error adding document: Id:{document.Id}, RawJson: {document.RawJson}");
+
+                if (aggregationTask?.Exception?.InnerExceptions != null &&
+                    aggregationTask.Exception.InnerExceptions.Any())
+                    foreach (var innerEx in aggregationTask.Exception.InnerExceptions)
+                        _logger.LogError(innerEx, "AggregateException");
+
                 await RevertAsync(updateTasks, document.Id, revertFuncs, ct);
                 throw;
             }            

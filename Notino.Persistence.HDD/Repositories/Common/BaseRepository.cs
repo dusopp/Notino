@@ -1,5 +1,5 @@
 ﻿using Newtonsoft.Json;
-using Notino.Application.Contracts.Persistence;
+using Notino.Domain.Contracts.Persistence;
 using Notino.Domain.Entities.Common;
 using System;
 using System.IO;
@@ -10,9 +10,9 @@ namespace Notino.Persistence.HDD.Repositories.Common
 {
     /*
      Methods that are not implemented and throw new NotImplementedException(),
-     are not implemented because lack of time.
+     are not implemented because of lack of time.
      They are necessary and they would be implemented if I had enough time.
-     Therefore, I am thinking, that in current context: 
+     Therefore, in current context: 
       I AM NOT BREAKING LISKOV SUBSTITUTION PRINCIPLE
      */
 
