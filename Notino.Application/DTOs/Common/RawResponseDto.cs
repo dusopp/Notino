@@ -6,7 +6,6 @@ namespace Notino.Application.DTOs.Common
 {
     public class RawResponseDto : IRawResponseDto
     {
-        public string RawResponse { get; set; }
-        public string StoredValue { get; set; }
+        public string RawResponse { get; set; }        
     }
 }

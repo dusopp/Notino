@@ -28,4 +28,8 @@
     <ProjectReference Include="..\Notino.Persistence.MSSQL\Notino.Persistence.MSSQL.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Validators\" />
+  </ItemGroup>
+
 </Project>

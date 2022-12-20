@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Notino.Domain;
+using Notino.Domain.Entities;
 using Notino.Persistence.MSSQL.Repositories.Common;
 
 namespace Notino.Persistence.MSSQL

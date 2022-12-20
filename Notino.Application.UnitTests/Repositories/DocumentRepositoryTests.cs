@@ -1,24 +1,22 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Notino.Application.Contracts.Persistence;
 using Notino.Application.Exceptions;
+using Notino.Domain.Contracts.Persistence;
+using Notino.Domain.Entities;
 using Notino.Persistence.MSSQL;
 using Notino.Persistence.MSSQL.Repositories;
 using Shouldly;
 using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
 
 namespace Notino.Application.UnitTests.Repositories
 {
     public class DocumentRepositoryTests
-    {
-        private DbContextOptions<NotinoDbContext> _contextOptions;
-
+    {      
         public DocumentRepositoryTests()
         {
-            
         }
 
         private NotinoDbContext GetContextWithData(string dbName) 
@@ -30,7 +28,7 @@ namespace Notino.Application.UnitTests.Repositories
             var dbContext = new NotinoDbContext(_contextOptions);
             
                 dbContext.Tags.Add(
-                    new Domain.Tag()
+                    new Tag()
                     {
                         Id = 1,
                         Name = "a"
@@ -38,7 +36,7 @@ namespace Notino.Application.UnitTests.Repositories
                 );
 
                 dbContext.Tags.Add(
-                    new Domain.Tag()
+                    new Tag()
                     {
                         Id = 2,
                         Name = "b"
@@ -46,30 +44,30 @@ namespace Notino.Application.UnitTests.Repositories
                 );
 
                 dbContext.Documents.Add(
-                    new Domain.Document()
+                    new Document()
                     {
                         Id = "1",
                         RawJson = @"{""Tags"":[""a"",""b""],""Data"":{""some"":""data"",""optional"":""fields""},""Id"":""1""}",
                     }
                 );
 
-                dbContext.DocumentTags.Add(new Domain.DocumentTag { DocumentId = "1", TagId = 1 });
-                dbContext.DocumentTags.Add(new Domain.DocumentTag { DocumentId = "1", TagId = 2 });
+                dbContext.DocumentTags.Add(new DocumentTag { DocumentId = "1", TagId = 1 });
+                dbContext.DocumentTags.Add(new DocumentTag { DocumentId = "1", TagId = 2 });
                 dbContext.SaveChanges();
 
                 return dbContext;
-         }        
+         }
 
+        #region GetByIdAsync
         [Fact]
-        public async Task GetById_ExistingDocument_ShouldReturnDocument()
-        {
-            
+        public async Task GetByIdAsync_ExistingDocument_ShouldReturnDocument()
+        {            
             var documentId = "1";
   
             using (var context = GetContextWithData(Guid.NewGuid().ToString()))
             {
                 IDocumentRepository docRepo = new DocumentRepository(context);
-                var document = await docRepo.GetByIdAsync(documentId);
+                var document = await docRepo.GetByIdAsync(documentId, CancellationToken.None);
 
                 document.ShouldNotBeNull();
                 document.Id.ShouldBe("1");
@@ -77,22 +75,54 @@ namespace Notino.Application.UnitTests.Repositories
         }
 
         [Fact]
-        public async Task GetById_NotExistingDocument_ShouldReturnNull()
+        public async Task GetByIdAsync_NotExistingDocument_ShouldReturnNull()
         {
             var documentId = "3";            
             using (var context = GetContextWithData(Guid.NewGuid().ToString()))
             {
                 IDocumentRepository docRepo = new DocumentRepository(context);
-                var document = await docRepo.GetByIdAsync(documentId);
+                var document = await docRepo.GetByIdAsync(documentId, CancellationToken.None);
 
                 document.ShouldBeNull();                
             }
         }
+        #endregion
+
+        #region AddDocumentWithTagsAsync
 
         [Fact]
-        public async Task AddDocumentWithTagsAsync_NewDocument_ShouldReturnDocument()
+        public async Task AddDocumentWithTagsAsync_NewDocumentWithTwoNewTags_ShouldReturnDocument()
         {
-            var documentToAdd = new Domain.Document()
+            var documentToAdd = new Document()
+            {
+                Id = "3",
+                RawJson = @"{""Tags"":[""a"",""b""],""Data"":{""some"":""data"",""optional"":""fields""},""Id"":""3""}",
+            };
+            var tags = new List<string>() { "a", "b" };
+
+            using (var context = GetContextWithData(Guid.NewGuid().ToString()))
+            {
+                IDocumentRepository docRepo = new DocumentRepository(context);
+                var document = await docRepo.AddDocumentWithTagsAsync(                      
+                      documentToAdd, tags, CancellationToken.None
+                    );
+                await context.SaveChangesAsync();
+
+                var newlyAddedDoc = await docRepo.GetByIdAsync(documentToAdd.Id, CancellationToken.None);
+                var tagsCount = await context.Tags.CountAsync();
+
+                newlyAddedDoc.ShouldNotBeNull();
+                newlyAddedDoc.Id.ShouldBe(documentToAdd.Id);
+                newlyAddedDoc.RawJson.ShouldBe(documentToAdd.RawJson);
+
+                tagsCount.ShouldBe(2);
+            }
+        }
+
+        [Fact]
+        public async Task AddDocumentWithTagsAsync_NewDocumentNoNewTags_ShouldReturnDocument()
+        {
+            var documentToAdd = new Document()
             {
                 Id = "3",
                 RawJson = @"{""Tags"":[""k"",""u""],""Data"":{""some"":""data"",""optional"":""fields""},""Id"":""3""}",
@@ -102,12 +132,12 @@ namespace Notino.Application.UnitTests.Repositories
             using (var context = GetContextWithData(Guid.NewGuid().ToString()))
             {
                 IDocumentRepository docRepo = new DocumentRepository(context);
-                var document = await docRepo.AddDocumentWithTagsAsync(                      
-                      documentToAdd, tags
+                var document = await docRepo.AddDocumentWithTagsAsync(
+                      documentToAdd, tags, CancellationToken.None
                     );
                 await context.SaveChangesAsync();
 
-                var newlyAddedDoc = await docRepo.GetByIdAsync(documentToAdd.Id);
+                var newlyAddedDoc = await docRepo.GetByIdAsync(documentToAdd.Id, CancellationToken.None);
                 var tagsCount = await context.Tags.CountAsync();
 
                 newlyAddedDoc.ShouldNotBeNull();
@@ -121,7 +151,7 @@ namespace Notino.Application.UnitTests.Repositories
         [Fact]
         public async Task AddDocumentWithTagsAsync_DocumentWithExistingId_ThrowsAlreadyExistsException()
         {
-            var documentToAdd = new Domain.Document()
+            var documentToAdd = new Document()
             {
                 Id = "1"                
             };            
@@ -132,17 +162,20 @@ namespace Notino.Application.UnitTests.Repositories
             
                 var result = await Should.ThrowAsync<AlreadyExistsException>(async () => await docRepo.AddDocumentWithTagsAsync(
                     documentToAdd,
-                    new List<string>() { }
+                    new List<string>() { },
+                    CancellationToken.None
                 ));
 
                 result.Message.ShouldBe($"Document with Id:'{documentToAdd.Id}' already exists");                
             }
         }
 
+        #endregion
+
         [Fact]
         public async Task DeleteDocumentWithTagsAsync_ExistingDocument_ShouldReturnDocumentId()
         {
-            var documentToRemove = new Domain.Document()
+            var documentToRemove = new Document()
             {
                 Id = "1",               
             };            
@@ -151,11 +184,11 @@ namespace Notino.Application.UnitTests.Repositories
             {
                 IDocumentRepository docRepo = new DocumentRepository(context);
                 var document = await docRepo.DeleteDocumentWithTagsAsync(
-                      documentToRemove.Id
+                      documentToRemove.Id, CancellationToken.None
                     );
                 await context.SaveChangesAsync();
 
-                var getDoc = await docRepo.GetByIdAsync(documentToRemove.Id);
+                var getDoc = await docRepo.GetByIdAsync(documentToRemove.Id, CancellationToken.None);
                 var docTagsCount = await context.DocumentTags.CountAsync();
 
                 getDoc.ShouldBeNull();
@@ -163,24 +196,64 @@ namespace Notino.Application.UnitTests.Repositories
             }
         }
 
+        #region UpdateDocumentWithTagsAsync
         [Fact]
-        public async Task DeleteDocumentWithTagsAsync_NotExistingDocument_ThrowsNotFoundException()
+        public async Task UpdateDocumentWithTagsAsync_ExistingDocumentWithTwoNewTags_ShouldReturnUpdatedDocument()
         {
-            var documentToRemove = new Domain.Document()
+            var documentToUpdate = new Document()
             {
-                Id = "2",
+                Id = "1",
+                RawJson = @"{""Tags"":[""p"",""t""],""Data"":{""some"":""data"",""optional"":""fields""},""Id"":""1""}",
             };
+            var tags = new List<string>() { "p", "t" };
 
             using (var context = GetContextWithData(Guid.NewGuid().ToString()))
             {
                 IDocumentRepository docRepo = new DocumentRepository(context);
+                var document = await docRepo.UpdateDocumentWithTagsAsync(
+                      documentToUpdate, tags, CancellationToken.None
+                    );
+                
+                var updatedDoc = await docRepo.GetByIdAsync(documentToUpdate.Id, CancellationToken.None);
+                var tagsCount = await context.Tags.CountAsync();
 
-                var result = await Should.ThrowAsync<NotFoundException>(async () => 
-                    await docRepo.DeleteDocumentWithTagsAsync(documentToRemove.Id)
-                );
+                updatedDoc.ShouldNotBeNull();
+                updatedDoc.Id.ShouldBe(documentToUpdate.Id);
+                updatedDoc.RawJson.ShouldBe(documentToUpdate.RawJson);
 
-                result.Message.ShouldBe($"Document with Id:'{documentToRemove.Id}' was not found");
+                tagsCount.ShouldBe(4);
             }
         }
+
+        [Fact]
+        public async Task UpdateDocumentWithTagsAsync_ExistingDocumentNoNewTags_ShouldReturnUpdatedDocument()
+        {
+            var documentToUpdate = new Document()
+            {
+                Id = "1",
+                RawJson = @"{""Tags"":[""a"",""b""],""Data"":{""some"":""test"",""optional"":""test2""},""Id"":""1""}",
+            };
+            var tags = new List<string>() { "a", "b" };
+
+            using (var context = GetContextWithData(Guid.NewGuid().ToString()))
+            {
+                IDocumentRepository docRepo = new DocumentRepository(context);
+                var document = await docRepo.UpdateDocumentWithTagsAsync(
+                      documentToUpdate, tags, CancellationToken.None
+                    );
+
+                var updatedDoc = await docRepo.GetByIdAsync(documentToUpdate.Id, CancellationToken.None);
+                var tagsCount = await context.Tags.CountAsync();
+
+                updatedDoc.ShouldNotBeNull();
+                updatedDoc.Id.ShouldBe(documentToUpdate.Id);
+                updatedDoc.RawJson.ShouldBe(documentToUpdate.RawJson);
+
+                tagsCount.ShouldBe(2);
+            }
+        }
+
+        #endregion
+
     }
 }

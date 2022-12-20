@@ -1,9 +1,8 @@
 ﻿using Newtonsoft.Json;
 using Notino.Application.Contracts.Messaging;
-using Notino.Application.Contracts.Persistence;
-using Notino.Application.Contracts.PersistenceOrchestration;
 using Notino.Application.Features.Document.Requests.Commands;
 using Notino.Application.Responses;
+using Notino.Domain.Contracts.PersistenceOrchestration;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -13,36 +12,27 @@ namespace Notino.Application.Features.Document.Handlers.Commands
     public class CreateDocumentHandler : ICommandHandler<CreateDocumentCommand, Response>
     {
         private readonly IDocumentPersistenceOrchestrator _docStorageOrchestrator;
-        private readonly IUnitOfWork unitOfWork;        
+             
 
         public CreateDocumentHandler(
-            IDocumentPersistenceOrchestrator docStorageOrchestrator 
-            //, IUnitOfWork unitOfWork //to delete for testing   
-            )
+            IDocumentPersistenceOrchestrator docStorageOrchestrator
+        )
         {
             _docStorageOrchestrator = docStorageOrchestrator ??
-                throw new ArgumentNullException(nameof(docStorageOrchestrator));
-
-            //this.unitOfWork = unitOfWork;            
-        }
+                throw new ArgumentNullException(nameof(docStorageOrchestrator));                  
+        }        
         
-        //refactor return type
-        public async Task<Response> Handle(CreateDocumentCommand request, CancellationToken cancellationToken)
+        public async Task<Response> Handle(CreateDocumentCommand request, CancellationToken ct)
         {         
-            var newDocument = new Domain.Document()
+            var newDocument = new Domain.Entities.Document()
             {
                 Id = request.DocumentDto.Id,
                 RawJson = JsonConvert.SerializeObject(request.DocumentDto)
             };
 
-            await _docStorageOrchestrator.AddAsync(newDocument, request.DocumentDto.Tags);
+            await _docStorageOrchestrator.AddAsync(newDocument, request.DocumentDto.Tags, ct);
 
-            //await unitOfWork.DocumentRepository.DeleteDocumentWithTagsAsync(newDocument.Id);
-
-            //await unitOfWork.DocumentRepository.UpdateDocumentWithTagsAsync(newDocument, request.DocumentDto.Tags);
-            //await unitOfWork.SaveAsync();
-
-            return new Response();
+            return new Response() { Success = true };
         }
     }
 }

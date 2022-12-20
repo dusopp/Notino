@@ -1,9 +1,8 @@
 ﻿using MediatR;
-using Notino.Application.Constants.Validation;
-using Notino.Application.Contracts.Persistence;
 using Notino.Application.DTOs.Common;
 using Notino.Application.Exceptions;
 using Notino.Application.Features.Document.Requests.Queries;
+using Notino.Domain.Contracts.Persistence;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -11,29 +10,25 @@ namespace Notino.Application.Features.Document.Handlers.Queries
 {
     public class GetDocumentHandler : IRequestHandler<GetDocumentRequest, RawResponseDto>
     {
-        private readonly IUnitOfWork _unitOfWork;        
+        private readonly IDocumentRepository _docRepo;
 
-        public GetDocumentHandler(IUnitOfWork unitOfWork)
-        {            
-            _unitOfWork = unitOfWork;            
+        public GetDocumentHandler(IDocumentRepository docRepo)
+        {          
+            _docRepo = docRepo;
         }
 
-        public async Task<RawResponseDto> Handle(GetDocumentRequest request, CancellationToken cancellationToken)
-        {
-          
-            var document = await _unitOfWork
-                .DocumentRepository
-                .GetByIdAsync(request.Id);
+        public async Task<RawResponseDto> Handle(GetDocumentRequest request, CancellationToken ct)
+        {          
+            var document = await _docRepo                
+                .GetByIdAsync(request.Id, ct);
 
             if (document == null)
-                throw new NotFoundException(ValidationMessages.Id, request.Id);
+                throw new NotFoundException(nameof(Domain.Entities.Document), request.Id);
 
-            var rawReposnseDto = new RawResponseDto()
+            return new RawResponseDto()
             { 
-                StoredValue = document.RawJson
-            };
-
-            return rawReposnseDto;
+                RawResponse = document.RawJson
+            };            
         }
     }
 }
