@@ -1,0 +1,234 @@
+{
+	"info": {
+		"_postman_id": "c204e01a-f1b8-4d80-91dc-28d4b9d070ea",
+		"name": "Notino",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "3619120"
+	},
+	"item": [
+		{
+			"name": "Correct",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n           \r\n    \"id\": \"ttt\",\r\n    \"tags\": [ \"m\", \"f\",\"ccc\"],\r\n    \"data\": {\r\n        \"some\": \"data\",\r\n        \"optional\": \"fields\"\r\n    }\r\n}"
+				},
+				"url": "{{baseUrl}}/document"
+			},
+			"response": []
+		},
+		{
+			"name": "Correct",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n           \r\n    \"id\": \"222\",\r\n    \"tags\": [ \"x\", \"b\"],\r\n    \"data\": {\r\n        \"some\": \"data\",\r\n        \"optional\": \"fields\"\r\n    }\r\n}"
+				},
+				"url": "https://localhost:44342/document"
+			},
+			"response": []
+		},
+		{
+			"name": "ValidationErrorMissingId",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \r\n    \"tags\": [\"important\", \".net\"],\r\n    \"data\": {\r\n        \"some\": \"data\",\r\n        \"optional\": \"fields\"\r\n    }\r\n}"
+				},
+				"url": "https://localhost:44342/document"
+			},
+			"response": []
+		},
+		{
+			"name": "ValidationErrorMissingId",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \r\n    \"tags\": [\"important\", \".net\"],\r\n    \"data\": {\r\n        \"some\": \"data\",\r\n        \"optional\": \"fields\"\r\n    }\r\n}"
+				},
+				"url": "https://localhost:44342/document"
+			},
+			"response": []
+		},
+		{
+			"name": "ValidationErrorEmptyId",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\": \"\",\r\n    \"tags\": [\"important\", \".net\"],\r\n    \"data\": {\r\n        \"some\": \"data\",\r\n        \"optional\": \"fields\"\r\n    }\r\n}"
+				},
+				"url": "https://localhost:44342/document"
+			},
+			"response": []
+		},
+		{
+			"name": "ValidationMissingData",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\": \"\",\r\n    \"tags\": [\"important\", \".net\"],\r\n    \"data\": {\r\n        \"some\": \"data\",\r\n        \"optional\": \"fields\"\r\n    }\r\n}"
+				},
+				"url": "https://localhost:44342/document"
+			},
+			"response": []
+		},
+		{
+			"name": "CorrectXml",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/xml",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\": \"1234\",\r\n    \"tags\": [\"imprtant\", \".net\"],\r\n    \"data\": {\r\n        \"some\": \"data\",\r\n        \"optional\": \"fields\"\r\n    }\r\n}"
+				},
+				"url": "https://localhost:44342/document/123"
+			},
+			"response": []
+		},
+		{
+			"name": "CorrectJSON",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/xml",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\": \"1234\",\r\n    \"tags\": [\"imprtant\", \".net\"],\r\n    \"data\": {\r\n        \"some\": \"data\",\r\n        \"optional\": \"fields\"\r\n    }\r\n}"
+				},
+				"url": "https://localhost:44342/document/123"
+			},
+			"response": []
+		},
+		{
+			"name": "CorrectMsgPack",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/x-msgpack",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\": \"1234\",\r\n    \"tags\": [\"imprtant\", \".net\"],\r\n    \"data\": {\r\n        \"some\": \"data\",\r\n        \"optional\": \"fields\"\r\n    }\r\n}"
+				},
+				"url": "https://localhost:44342/document/123/msg"
+			},
+			"response": []
+		},
+		{
+			"name": "NotSupportedMediaType",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/ecmascript",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\": \"1234\",\r\n    \"tags\": [\"imprtant\", \".net\"],\r\n    \"data\": {\r\n        \"some\": \"data\",\r\n        \"optional\": \"fields\"\r\n    }\r\n}"
+				},
+				"url": "https://localhost:44342/document/67"
+			},
+			"response": []
+		},
+		{
+			"name": "NotFound",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\": \"1234\",\r\n    \"tags\": [\"imprtant\", \".net\"],\r\n    \"data\": {\r\n        \"some\": \"data\",\r\n        \"optional\": \"fields\"\r\n    }\r\n}"
+				},
+				"url": "{{baseUrl}}/document/679999999999"
+			},
+			"response": []
+		}
+	]
+}

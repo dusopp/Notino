@@ -32,7 +32,7 @@ namespace Notino.Application.Behaviours
 
             if (errorsList.Any())
             {
-                throw new ValidationException(errorsList);
+                throw new Exceptions.ValidationException(errorsList);
             }
 
             return await next();
