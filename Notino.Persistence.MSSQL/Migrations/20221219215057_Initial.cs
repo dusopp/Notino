@@ -40,6 +40,8 @@ namespace Notino.Persistence.MSSQL.Migrations
                     table.PrimaryKey("PK_Tags", x => x.Id);
                 });
 
+
+            
             migrationBuilder.CreateTable(
                 name: "DocumentTags",
                 columns: table => new
@@ -56,13 +58,13 @@ namespace Notino.Persistence.MSSQL.Migrations
                         column: x => x.TagId,
                         principalTable: "Tags",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.SetNull); //to by bolo lepsie nastavit v konfiguracii cez fluentApi. Malo casu
                     table.ForeignKey(
                         name: "FK_DocumentTags_Documents_DocumentId_DocumentInternalId",
                         columns: x => new { x.DocumentId, x.DocumentInternalId },
                         principalTable: "Documents",
                         principalColumns: new[] { "Id", "InternalId" },
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.SetNull);//to by bolo lepsie nastavit v konfiguracii cez fluentApi
                 });
 
             migrationBuilder.CreateIndex(

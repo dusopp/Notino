@@ -11,7 +11,7 @@ namespace Notino.API.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class WeatherForecastController : BaseController
+    public class WeatherForecastController : ControllerBase
     {
         private static readonly string[] Summaries = new[]
         {
@@ -37,8 +37,7 @@ namespace Notino.API.Controllers
             //    TemperatureC = rng.Next(-20, 55),
             //    Summary = Summaries[rng.Next(Summaries.Length)]
             //})
-            //.ToArray();
-            await Task.Delay(10_000, ct);
+            //.ToArray();            
 
             var message = "Finished slow delay of 10 seconds.";
 

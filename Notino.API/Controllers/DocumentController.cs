@@ -16,12 +16,11 @@ namespace Notino.API.Controllers
     [Route("[controller]")]
     public class DocumentController : BaseController
     {
-        private readonly IMediator _mediator;
+        
 
         public DocumentController(IMediator mediator)
-            :base()
-        {
-            _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
+            :base(mediator)
+        {            
         }
         
         [HttpGet("{documentId}")]
